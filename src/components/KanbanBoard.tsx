@@ -7,6 +7,7 @@ interface KanbanBoardProps {
   contacts: Contact[];
   onMoveContact: (contactId: string, newStage: Contact['stage']) => void;
   onCardClick: (contact: Contact) => void;
+  onRefresh?: () => void;
 }
 
 export const KanbanBoard = ({
@@ -14,6 +15,7 @@ export const KanbanBoard = ({
   contacts,
   onMoveContact,
   onCardClick,
+  onRefresh,
 }: KanbanBoardProps) => {
   const columns = boardType === 'prospect' ? PROSPECT_COLUMNS : ACTIVE_COLUMNS;
 
@@ -39,6 +41,7 @@ export const KanbanBoard = ({
             column={column}
             contacts={getContactsForColumn(column.id)}
             onCardClick={onCardClick}
+            onRefresh={onRefresh}
           />
         ))}
       </div>

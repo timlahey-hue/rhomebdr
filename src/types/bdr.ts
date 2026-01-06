@@ -35,6 +35,8 @@ export interface Contact {
   createdAt: string;
   address?: string;
   website?: string;
+  aiSummary?: string;
+  aiAvPartners?: string;
 }
 
 export interface Column<T extends string> {

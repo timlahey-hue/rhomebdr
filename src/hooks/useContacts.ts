@@ -18,6 +18,8 @@ const mapDbToContact = (row: any): Contact => ({
   createdAt: row.created_at,
   address: row.address,
   website: row.website,
+  aiSummary: row.ai_summary,
+  aiAvPartners: row.ai_av_partners,
 });
 
 const mapContactToDb = (contact: Omit<Contact, 'id' | 'createdAt'>) => ({
@@ -39,7 +41,7 @@ const mapContactToDb = (contact: Omit<Contact, 'id' | 'createdAt'>) => ({
 export const useContacts = () => {
   const queryClient = useQueryClient();
 
-  const { data: contacts = [], isLoading } = useQuery({
+  const { data: contacts = [], isLoading, refetch } = useQuery({
     queryKey: ['contacts'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -157,6 +159,7 @@ export const useContacts = () => {
   return {
     contacts,
     isLoading,
+    refetch,
     addContact,
     importContacts,
     updateContact,
