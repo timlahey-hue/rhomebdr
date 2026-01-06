@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 export interface ContactActivity {
   id: string;
   contactId: string;
-  activityType: 'stage_change' | 'board_change' | 'touch' | 'created' | 'watched';
+  activityType: 'stage_change' | 'board_change' | 'touch' | 'created' | 'watched' | 'lunch_meeting';
   fromValue: string | null;
   toValue: string | null;
   notes: string | null;
