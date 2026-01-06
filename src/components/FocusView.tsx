@@ -4,6 +4,7 @@ import { ContactCard } from './ContactCard';
 import { ActionCard } from './ActionCard';
 import { WatchList } from './WatchList';
 import { ActivityTimeline } from './ActivityTimeline';
+import { GoalTracker } from './GoalTracker';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertCircle, Clock, Star, TrendingUp } from 'lucide-react';
@@ -41,6 +42,9 @@ export const FocusView = ({ contacts, onCardClick }: FocusViewProps) => {
 
   return (
     <div className="space-y-6">
+      {/* BDR Goals */}
+      <GoalTracker contacts={contacts} />
+
       {/* Stats Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="border-border/50">
