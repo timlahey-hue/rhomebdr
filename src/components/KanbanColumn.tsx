@@ -7,14 +7,12 @@ interface KanbanColumnProps<T extends string> {
   column: Column<T>;
   contacts: Contact[];
   onCardClick: (contact: Contact) => void;
-  onRefresh?: () => void;
 }
 
 export function KanbanColumn<T extends string>({
   column,
   contacts,
   onCardClick,
-  onRefresh,
 }: KanbanColumnProps<T>) {
   return (
     <div className="flex-shrink-0 w-72">
@@ -50,7 +48,6 @@ export function KanbanColumn<T extends string>({
                         contact={contact}
                         onClick={() => onCardClick(contact)}
                         isDragging={snapshot.isDragging}
-                        onResearchComplete={onRefresh}
                       />
                     </div>
                   )}

@@ -12,9 +12,10 @@ import { ActionCard } from './ActionCard';
 import { ScheduleFollowupDialog } from './ScheduleFollowupDialog';
 import { getSuggestedActions } from '@/lib/actions';
 import { Separator } from '@/components/ui/separator';
-import { Calendar, Clock, Building2, X, Trash2, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, Building2, X, Trash2, ArrowRight, Globe, Sparkles, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
+import { useContactResearch } from '@/hooks/useContactResearch';
 
 interface ContactDetailSheetProps {
   contact: Contact | null;
@@ -23,6 +24,7 @@ interface ContactDetailSheetProps {
   onUpdate: (id: string, updates: Partial<Contact>) => void;
   onDelete: (id: string) => void;
   onMoveToActive?: (contact: Contact) => void;
+  onRefresh?: () => void;
 }
 
 export const ContactDetailSheet = ({
@@ -32,16 +34,24 @@ export const ContactDetailSheet = ({
   onUpdate,
   onDelete,
   onMoveToActive,
+  onRefresh,
 }: ContactDetailSheetProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<Partial<Contact>>({});
   const [newTag, setNewTag] = useState('');
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
+  const { researchContact, isResearching } = useContactResearch();
 
   if (!contact) return null;
 
   const actions = getSuggestedActions(contact);
   const displayData = isEditing ? { ...contact, ...editData } : contact;
+  const isCurrentlyResearching = isResearching === contact.id;
+
+  const handleResearch = async () => {
+    await researchContact(contact);
+    onRefresh?.();
+  };
 
   const handleSave = () => {
     // Check if relationship type changed from Target to Active Partner
@@ -136,6 +146,19 @@ export const ContactDetailSheet = ({
                   <Building2 className="h-4 w-4" />
                   <span className="text-sm">{contact.company}</span>
                 </div>
+                {contact.website && (
+                  <div className="flex items-center gap-1.5 text-muted-foreground mt-1">
+                    <Globe className="h-4 w-4" />
+                    <a 
+                      href={contact.website.startsWith('http') ? contact.website : `https://${contact.website}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm hover:text-accent hover:underline"
+                    >
+                      {contact.website.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                    </a>
+                  </div>
+                )}
               </div>
               <RelationshipStrength strength={contact.relationshipStrength} size="md" />
             </div>
@@ -171,6 +194,60 @@ export const ContactDetailSheet = ({
             >
               {isEditing ? 'Save' : 'Edit'}
             </Button>
+          </div>
+
+          <Separator className="mb-4" />
+
+          {/* AI Research Section */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-medium text-sm text-foreground flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-accent" />
+                AI Research
+              </h3>
+              {contact.website && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleResearch}
+                  disabled={isCurrentlyResearching}
+                >
+                  {isCurrentlyResearching ? (
+                    <>
+                      <Loader2 className="h-3 w-3 mr-1.5 animate-spin" />
+                      Researching...
+                    </>
+                  ) : contact.aiSummary ? (
+                    'Re-research'
+                  ) : (
+                    'Research Contact'
+                  )}
+                </Button>
+              )}
+            </div>
+            
+            {contact.aiSummary ? (
+              <div className="space-y-3">
+                <div className="bg-accent/5 border border-accent/20 rounded-lg p-3">
+                  <Label className="text-xs text-muted-foreground mb-1 block">Executive Summary</Label>
+                  <p className="text-sm text-foreground">{contact.aiSummary}</p>
+                </div>
+                {contact.aiAvPartners && (
+                  <div className="bg-muted/50 border border-border rounded-lg p-3">
+                    <Label className="text-xs text-muted-foreground mb-1 block">Potential AV Partners</Label>
+                    <p className="text-sm text-foreground">{contact.aiAvPartners}</p>
+                  </div>
+                )}
+              </div>
+            ) : contact.website ? (
+              <p className="text-sm text-muted-foreground">
+                Click "Research Contact" to get an AI-generated summary and discover potential AV integration partners.
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Add a website to this contact to enable AI research.
+              </p>
+            )}
           </div>
 
           <Separator className="mb-4" />
