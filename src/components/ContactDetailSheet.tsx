@@ -12,11 +12,13 @@ import { ActionCard } from './ActionCard';
 import { ScheduleFollowupDialog } from './ScheduleFollowupDialog';
 import { getSuggestedActions } from '@/lib/actions';
 import { Separator } from '@/components/ui/separator';
-import { Calendar, Clock, Building2, X, Trash2, ArrowRight, Globe, Sparkles, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Calendar, Clock, Building2, X, Trash2, ArrowRight, Globe, Sparkles, Loader2, Eye, EyeOff, Utensils } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
 import { useContactResearch } from '@/hooks/useContactResearch';
 import { useContactActivity } from '@/hooks/useContactActivity';
+import { useContactLunchMeetings } from '@/hooks/useBDRGoals';
+import { format } from 'date-fns';
 
 interface ContactDetailSheetProps {
   contact: Contact | null;
@@ -43,12 +45,14 @@ export const ContactDetailSheet = ({
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
   const { researchContact, isResearching } = useContactResearch();
   const { logActivity } = useContactActivity();
+  const { lunchMeetings } = useContactLunchMeetings(contact?.id);
 
   if (!contact) return null;
 
   const actions = getSuggestedActions(contact);
   const displayData = isEditing ? { ...contact, ...editData } : contact;
   const isCurrentlyResearching = isResearching === contact.id;
+  const hasLunchMeetings = lunchMeetings.length > 0;
 
   const handleResearch = async () => {
     await researchContact(contact);
@@ -211,6 +215,12 @@ export const ContactDetailSheet = ({
                     </a>
                   </div>
                 ) : null}
+                {hasLunchMeetings && (
+                  <Badge className="mt-2 bg-green-500/20 text-green-600 border-green-500/30 hover:bg-green-500/30">
+                    <Utensils className="h-3 w-3 mr-1" />
+                    Lunch Meeting Complete
+                  </Badge>
+                )}
               </div>
               <RelationshipStrength strength={contact.relationshipStrength} size="md" />
             </div>
@@ -323,6 +333,49 @@ export const ContactDetailSheet = ({
           </div>
 
           <Separator className="mb-4" />
+
+          {/* Lunch Meetings Section */}
+          {hasLunchMeetings && (
+            <>
+              <div className="mb-6">
+                <h3 className="font-medium text-sm mb-3 text-foreground flex items-center gap-2">
+                  <Utensils className="h-4 w-4 text-green-500" />
+                  Lunch Meetings
+                  <Badge variant="secondary" className="text-xs font-normal">
+                    {lunchMeetings.length}
+                  </Badge>
+                </h3>
+                <div className="space-y-2">
+                  {lunchMeetings.map((meeting) => (
+                    <div
+                      key={meeting.id}
+                      className="flex items-center gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20"
+                    >
+                      <div className="p-1.5 rounded bg-green-500/20">
+                        <Utensils className="h-3.5 w-3.5 text-green-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-foreground">
+                            {format(new Date(meeting.meetingDate), 'MMM d, yyyy')}
+                          </span>
+                          <Badge className="bg-green-500/20 text-green-600 border-0 text-xs">
+                            Complete
+                          </Badge>
+                        </div>
+                        {meeting.notes && (
+                          <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                            {meeting.notes}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <Separator className="mb-4" />
+            </>
+          )}
 
           {/* Suggested Actions */}
           <div className="mb-6">
