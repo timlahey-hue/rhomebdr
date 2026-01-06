@@ -116,7 +116,7 @@ export const FocusView = ({ contacts, onCardClick }: FocusViewProps) => {
                     <span className="text-sm font-medium text-foreground">{contact.name}</span>
                     <span className="text-xs text-muted-foreground">• {contact.company}</span>
                   </div>
-                  <ActionCard action={action} onClick={() => onCardClick(contact)} />
+                  <ActionCard action={action} contact={contact} onClick={() => onCardClick(contact)} />
                 </div>
               ))
             ) : (

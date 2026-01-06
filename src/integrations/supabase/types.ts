@@ -14,7 +14,113 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      contacts: {
+        Row: {
+          board: string
+          company: string
+          created_at: string
+          id: string
+          last_touch_date: string | null
+          name: string
+          next_touch_date: string | null
+          relationship_strength: number
+          relationship_type: string
+          role: string
+          stage: string
+          status_notes: string | null
+          tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          board: string
+          company: string
+          created_at?: string
+          id?: string
+          last_touch_date?: string | null
+          name: string
+          next_touch_date?: string | null
+          relationship_strength?: number
+          relationship_type: string
+          role: string
+          stage: string
+          status_notes?: string | null
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          board?: string
+          company?: string
+          created_at?: string
+          id?: string
+          last_touch_date?: string | null
+          name?: string
+          next_touch_date?: string | null
+          relationship_strength?: number
+          relationship_type?: string
+          role?: string
+          stage?: string
+          status_notes?: string | null
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      email_drafts: {
+        Row: {
+          action_type: string
+          body: string
+          contact_id: string | null
+          created_at: string
+          id: string
+          subject: string
+        }
+        Insert: {
+          action_type: string
+          body: string
+          contact_id?: string | null
+          created_at?: string
+          id?: string
+          subject: string
+        }
+        Update: {
+          action_type?: string
+          body?: string
+          contact_id?: string | null
+          created_at?: string
+          id?: string
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_drafts_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      voice_profile: {
+        Row: {
+          id: string
+          sample_emails: string[] | null
+          tone_description: string | null
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          sample_emails?: string[] | null
+          tone_description?: string | null
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          sample_emails?: string[] | null
+          tone_description?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
