@@ -10,7 +10,7 @@ interface TimeLog {
   createdAt: string;
 }
 
-interface LunchMeeting {
+export interface LunchMeeting {
   id: string;
   meetingDate: string;
   contactId: string | null;
@@ -163,4 +163,31 @@ export function useBDRGoals() {
     deleteTimeLog,
     deleteLunchMeeting,
   };
+}
+
+// Hook to fetch lunch meetings for a specific contact
+export function useContactLunchMeetings(contactId: string | undefined) {
+  const { data: lunchMeetings = [], isLoading } = useQuery({
+    queryKey: ['contact-lunch-meetings', contactId],
+    queryFn: async () => {
+      if (!contactId) return [];
+      const { data, error } = await supabase
+        .from('lunch_meetings')
+        .select('*')
+        .eq('contact_id', contactId)
+        .order('meeting_date', { ascending: false });
+
+      if (error) throw error;
+      return (data || []).map((meeting: any) => ({
+        id: meeting.id,
+        meetingDate: meeting.meeting_date,
+        contactId: meeting.contact_id,
+        notes: meeting.notes,
+        createdAt: meeting.created_at,
+      })) as LunchMeeting[];
+    },
+    enabled: !!contactId,
+  });
+
+  return { lunchMeetings, isLoading };
 }
