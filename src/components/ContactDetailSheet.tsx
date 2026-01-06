@@ -11,7 +11,7 @@ import { RelationshipStrength } from './RelationshipStrength';
 import { ActionCard } from './ActionCard';
 import { getSuggestedActions } from '@/lib/actions';
 import { Separator } from '@/components/ui/separator';
-import { Calendar, Clock, Building2, User, X, Trash2, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, Building2, X, Trash2, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
 
@@ -136,7 +136,7 @@ export const ContactDetailSheet = ({
           <h3 className="font-medium text-sm mb-3 text-foreground">Suggested Actions</h3>
           <div className="space-y-2">
             {actions.slice(0, 3).map((action, index) => (
-              <ActionCard key={index} action={action} />
+              <ActionCard key={index} action={action} contact={contact} />
             ))}
           </div>
         </div>

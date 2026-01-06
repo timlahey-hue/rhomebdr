@@ -1,14 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useContacts } from '@/hooks/useContacts';
 import { Contact } from '@/types/bdr';
 import { KanbanBoard } from '@/components/KanbanBoard';
 import { FocusView } from '@/components/FocusView';
 import { ContactDetailSheet } from '@/components/ContactDetailSheet';
 import { AddContactDialog } from '@/components/AddContactDialog';
+import { VoiceSettingsDialog } from '@/components/VoiceSettingsDialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Target, Users, LayoutGrid, Home } from 'lucide-react';
+import { Plus, Target, Users, LayoutGrid, Home, Settings, Sparkles } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { mockContacts } from '@/lib/mockData';
 
 type ViewType = 'focus' | 'pipeline' | 'active';
 
@@ -28,6 +31,47 @@ const Index = () => {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isVoiceOpen, setIsVoiceOpen] = useState(false);
+  const [hasSeeded, setHasSeeded] = useState(false);
+
+  // Seed sample data if database is empty
+  useEffect(() => {
+    const seedData = async () => {
+      if (hasSeeded || isLoading || contacts.length > 0) return;
+      
+      try {
+        // Check if we already have contacts
+        const { count } = await supabase
+          .from('contacts')
+          .select('*', { count: 'exact', head: true });
+        
+        if (count === 0) {
+          // Insert mock data
+          const dbContacts = mockContacts.map((c) => ({
+            name: c.name,
+            company: c.company,
+            role: c.role,
+            relationship_type: c.relationshipType,
+            last_touch_date: c.lastTouchDate,
+            next_touch_date: c.nextTouchDate,
+            status_notes: c.statusNotes,
+            relationship_strength: c.relationshipStrength,
+            tags: c.tags,
+            board: c.board,
+            stage: c.stage,
+          }));
+
+          await supabase.from('contacts').insert(dbContacts);
+          setHasSeeded(true);
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error('Error seeding data:', error);
+      }
+    };
+
+    seedData();
+  }, [contacts, isLoading, hasSeeded]);
 
   const handleCardClick = (contact: Contact) => {
     setSelectedContact(contact);
@@ -42,8 +86,8 @@ const Index = () => {
     moveContact(contact.id, 'new-relationship', 'active');
   };
 
-  const handleAddContact = (contactData: Omit<Contact, 'id' | 'createdAt'>) => {
-    addContact(contactData);
+  const handleAddContact = async (contactData: Omit<Contact, 'id' | 'createdAt'>) => {
+    await addContact(contactData);
     toast({ title: 'Contact added', description: `${contactData.name} has been added.` });
   };
 
@@ -90,14 +134,25 @@ const Index = () => {
               </TabsList>
             </Tabs>
 
-            {/* Add Button */}
-            <Button
-              onClick={() => setIsAddOpen(true)}
-              className="bg-accent text-accent-foreground hover:bg-accent/90 gap-1.5"
-            >
-              <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Add Contact</span>
-            </Button>
+            {/* Actions */}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsVoiceOpen(true)}
+                className="text-muted-foreground hover:text-foreground"
+                title="Email Voice Settings"
+              >
+                <Sparkles className="h-5 w-5" />
+              </Button>
+              <Button
+                onClick={() => setIsAddOpen(true)}
+                className="bg-accent text-accent-foreground hover:bg-accent/90 gap-1.5"
+              >
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">Add Contact</span>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -166,6 +221,11 @@ const Index = () => {
         onOpenChange={setIsAddOpen}
         onAdd={handleAddContact}
         defaultBoard={currentView === 'active' ? 'active' : 'prospect'}
+      />
+
+      <VoiceSettingsDialog
+        open={isVoiceOpen}
+        onOpenChange={setIsVoiceOpen}
       />
     </div>
   );
