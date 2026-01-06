@@ -32,6 +32,7 @@ const Index = () => {
   const {
     contacts,
     isLoading,
+    refetch,
     addContact,
     importContacts,
     updateContact,
@@ -249,6 +250,7 @@ const Index = () => {
               contacts={getProspectContacts()}
               onMoveContact={handleMoveContact}
               onCardClick={handleCardClick}
+              onRefresh={refetch}
             />
           </div>
         )}
@@ -293,6 +295,7 @@ const Index = () => {
               contacts={getActiveContacts()}
               onMoveContact={handleMoveContact}
               onCardClick={handleCardClick}
+              onRefresh={refetch}
             />
           </div>
         )}

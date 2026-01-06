@@ -1,14 +1,17 @@
 import { Contact } from '@/types/bdr';
 import { RelationshipStrength } from './RelationshipStrength';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Calendar, Clock, Building2, User } from 'lucide-react';
+import { Calendar, Clock, Building2, Globe, Sparkles, Loader2 } from 'lucide-react';
 import { isOverdue, isDueSoon, needsAttention } from '@/lib/actions';
+import { useContactResearch } from '@/hooks/useContactResearch';
 
 interface ContactCardProps {
   contact: Contact;
   onClick: () => void;
   isDragging?: boolean;
+  onResearchComplete?: () => void;
 }
 
 const formatDate = (dateStr: string | null): string => {
@@ -37,10 +40,19 @@ const formatNextDate = (dateStr: string | null): string => {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 };
 
-export const ContactCard = ({ contact, onClick, isDragging }: ContactCardProps) => {
+export const ContactCard = ({ contact, onClick, isDragging, onResearchComplete }: ContactCardProps) => {
   const overdue = isOverdue(contact);
   const dueSoon = isDueSoon(contact);
   const attention = needsAttention(contact);
+  const { researchContact, isResearching } = useContactResearch();
+
+  const handleResearch = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await researchContact(contact);
+    onResearchComplete?.();
+  };
+
+  const isCurrentlyResearching = isResearching === contact.id;
 
   return (
     <div
@@ -65,6 +77,59 @@ export const ContactCard = ({ contact, onClick, isDragging }: ContactCardProps) 
         </div>
         <RelationshipStrength strength={contact.relationshipStrength} />
       </div>
+
+      {/* Website */}
+      {contact.website && (
+        <div className="flex items-center gap-1 text-muted-foreground mb-2">
+          <Globe className="h-3 w-3 flex-shrink-0" />
+          <a 
+            href={contact.website.startsWith('http') ? contact.website : `https://${contact.website}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="text-xs truncate hover:text-accent hover:underline"
+          >
+            {contact.website.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+          </a>
+        </div>
+      )}
+
+      {/* AI Summary */}
+      {contact.aiSummary && (
+        <div className="bg-accent/5 border border-accent/20 rounded p-2 mb-2">
+          <p className="text-xs text-foreground/80 line-clamp-3">
+            {contact.aiSummary}
+          </p>
+          {contact.aiAvPartners && (
+            <p className="text-[10px] text-muted-foreground mt-1 line-clamp-2">
+              <span className="font-medium">AV Partners:</span> {contact.aiAvPartners}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Research button if no summary yet */}
+      {!contact.aiSummary && contact.website && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleResearch}
+          disabled={isCurrentlyResearching}
+          className="w-full mb-2 h-7 text-xs"
+        >
+          {isCurrentlyResearching ? (
+            <>
+              <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+              Researching...
+            </>
+          ) : (
+            <>
+              <Sparkles className="h-3 w-3 mr-1" />
+              Research Contact
+            </>
+          )}
+        </Button>
+      )}
 
       {/* Role badge */}
       <div className="flex items-center gap-1.5 mb-2">

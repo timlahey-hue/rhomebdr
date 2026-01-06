@@ -17,6 +17,8 @@ export type Database = {
       contacts: {
         Row: {
           address: string | null
+          ai_av_partners: string | null
+          ai_summary: string | null
           board: string
           company: string
           created_at: string
@@ -35,6 +37,8 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          ai_av_partners?: string | null
+          ai_summary?: string | null
           board: string
           company: string
           created_at?: string
@@ -53,6 +57,8 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          ai_av_partners?: string | null
+          ai_summary?: string | null
           board?: string
           company?: string
           created_at?: string
