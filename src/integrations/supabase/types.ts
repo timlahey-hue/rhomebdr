@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      bdr_time_logs: {
+        Row: {
+          created_at: string
+          hours: number
+          id: string
+          log_date: string
+          notes: string | null
+        }
+        Insert: {
+          created_at?: string
+          hours: number
+          id?: string
+          log_date?: string
+          notes?: string | null
+        }
+        Update: {
+          created_at?: string
+          hours?: number
+          id?: string
+          log_date?: string
+          notes?: string | null
+        }
+        Relationships: []
+      }
       contact_activity: {
         Row: {
           activity_type: string
@@ -146,6 +170,38 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "email_drafts_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lunch_meetings: {
+        Row: {
+          contact_id: string | null
+          created_at: string
+          id: string
+          meeting_date: string
+          notes: string | null
+        }
+        Insert: {
+          contact_id?: string | null
+          created_at?: string
+          id?: string
+          meeting_date?: string
+          notes?: string | null
+        }
+        Update: {
+          contact_id?: string | null
+          created_at?: string
+          id?: string
+          meeting_date?: string
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lunch_meetings_contact_id_fkey"
             columns: ["contact_id"]
             isOneToOne: false
             referencedRelation: "contacts"
