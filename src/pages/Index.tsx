@@ -250,7 +250,6 @@ const Index = () => {
               contacts={getProspectContacts()}
               onMoveContact={handleMoveContact}
               onCardClick={handleCardClick}
-              onRefresh={refetch}
             />
           </div>
         )}
@@ -295,7 +294,6 @@ const Index = () => {
               contacts={getActiveContacts()}
               onMoveContact={handleMoveContact}
               onCardClick={handleCardClick}
-              onRefresh={refetch}
             />
           </div>
         )}
@@ -309,6 +307,7 @@ const Index = () => {
         onUpdate={updateContact}
         onDelete={deleteContact}
         onMoveToActive={handleMoveToActive}
+        onRefresh={refetch}
       />
 
       <AddContactDialog
