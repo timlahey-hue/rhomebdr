@@ -2,3 +2,6 @@ project_id = "bdzwuwobkkyeovirbrck"
 
 [functions.draft-email]
 verify_jwt = false
+
+[functions.google-calendar]
+verify_jwt = false
