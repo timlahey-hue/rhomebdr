@@ -6,9 +6,10 @@ import { FocusView } from '@/components/FocusView';
 import { ContactDetailSheet } from '@/components/ContactDetailSheet';
 import { AddContactDialog } from '@/components/AddContactDialog';
 import { VoiceSettingsDialog } from '@/components/VoiceSettingsDialog';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Target, Users, LayoutGrid, Home, Settings, Sparkles } from 'lucide-react';
+import { Plus, Target, Users, LayoutGrid, Home, Sparkles } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { mockContacts } from '@/lib/mockData';
@@ -136,6 +137,7 @@ const Index = () => {
 
             {/* Actions */}
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               <Button
                 variant="ghost"
                 size="icon"

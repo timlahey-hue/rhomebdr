@@ -92,6 +92,78 @@
     --sidebar-border: 35 15% 90%;
     --sidebar-ring: 150 25% 45%;
   }
+
+  .dark {
+    /* Dark mode palette */
+    --background: 220 20% 10%;
+    --foreground: 40 15% 92%;
+
+    --card: 220 18% 13%;
+    --card-foreground: 40 15% 92%;
+
+    --popover: 220 18% 13%;
+    --popover-foreground: 40 15% 92%;
+
+    /* Primary - Light cream */
+    --primary: 40 20% 92%;
+    --primary-foreground: 220 20% 10%;
+
+    /* Secondary - Dark stone */
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 40 15% 85%;
+
+    /* Muted */
+    --muted: 220 12% 16%;
+    --muted-foreground: 220 10% 55%;
+
+    /* Accent - Sage green */
+    --accent: 150 30% 50%;
+    --accent-foreground: 220 20% 10%;
+
+    /* Highlight - Warm gold */
+    --highlight: 38 70% 55%;
+    --highlight-foreground: 220 20% 10%;
+
+    --destructive: 0 55% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 150 30% 50%;
+
+    /* Column colors - dark mode */
+    --column-research: 220 15% 14%;
+    --column-identified: 200 18% 15%;
+    --column-contact: 180 15% 14%;
+    --column-active: 160 15% 14%;
+    --column-warm: 140 15% 14%;
+    --column-ready: 130 18% 14%;
+    --column-dormant: 20 10% 14%;
+
+    --column-new: 200 18% 15%;
+    --column-healthy: 150 15% 14%;
+    --column-underengaged: 35 20% 15%;
+    --column-advocate: 130 18% 14%;
+    --column-risk: 0 25% 16%;
+    --column-paused: 220 12% 14%;
+
+    /* Shadows - darker */
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.2);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.3), 0 2px 4px -2px hsl(0 0% 0% / 0.2);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.35), 0 4px 6px -4px hsl(0 0% 0% / 0.25);
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.25), 0 1px 2px -1px hsl(0 0% 0% / 0.2);
+    --shadow-card-hover: 0 4px 12px 0 hsl(0 0% 0% / 0.4), 0 2px 4px -1px hsl(0 0% 0% / 0.3);
+
+    /* Sidebar */
+    --sidebar-background: 220 18% 11%;
+    --sidebar-foreground: 40 15% 85%;
+    --sidebar-primary: 40 20% 92%;
+    --sidebar-primary-foreground: 220 20% 10%;
+    --sidebar-accent: 150 30% 50%;
+    --sidebar-accent-foreground: 220 20% 10%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 150 30% 50%;
+  }
 }
 
 @layer base {
