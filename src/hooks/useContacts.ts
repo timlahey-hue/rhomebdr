@@ -144,6 +144,16 @@ export const useContacts = () => {
   const getActiveContacts = () =>
     contacts.filter((c) => c.board === 'active');
 
+  const clearBoard = async (board: 'prospect' | 'active') => {
+    const { error } = await supabase
+      .from('contacts')
+      .delete()
+      .eq('board', board);
+    
+    if (error) throw error;
+    queryClient.invalidateQueries({ queryKey: ['contacts'] });
+  };
+
   return {
     contacts,
     isLoading,
@@ -154,5 +164,6 @@ export const useContacts = () => {
     moveContact,
     getProspectContacts,
     getActiveContacts,
+    clearBoard,
   };
 };
