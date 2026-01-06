@@ -51,7 +51,15 @@ const Index = () => {
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [hasSeeded, setHasSeeded] = useState(false);
 
-  // Seed sample data if database is empty
+  // Keep selectedContact in sync with contacts array
+  useEffect(() => {
+    if (selectedContact) {
+      const updatedContact = contacts.find((c) => c.id === selectedContact.id);
+      if (updatedContact && JSON.stringify(updatedContact) !== JSON.stringify(selectedContact)) {
+        setSelectedContact(updatedContact);
+      }
+    }
+  }, [contacts, selectedContact]);
   useEffect(() => {
     const seedData = async () => {
       if (hasSeeded || isLoading || contacts.length > 0) return;
