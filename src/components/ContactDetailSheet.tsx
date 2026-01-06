@@ -12,10 +12,11 @@ import { ActionCard } from './ActionCard';
 import { ScheduleFollowupDialog } from './ScheduleFollowupDialog';
 import { getSuggestedActions } from '@/lib/actions';
 import { Separator } from '@/components/ui/separator';
-import { Calendar, Clock, Building2, X, Trash2, ArrowRight, Globe, Sparkles, Loader2 } from 'lucide-react';
+import { Calendar, Clock, Building2, X, Trash2, ArrowRight, Globe, Sparkles, Loader2, Eye, EyeOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
 import { useContactResearch } from '@/hooks/useContactResearch';
+import { useContactActivity } from '@/hooks/useContactActivity';
 
 interface ContactDetailSheetProps {
   contact: Contact | null;
@@ -41,6 +42,7 @@ export const ContactDetailSheet = ({
   const [newTag, setNewTag] = useState('');
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
   const { researchContact, isResearching } = useContactResearch();
+  const { logActivity } = useContactActivity();
 
   if (!contact) return null;
 
@@ -93,10 +95,32 @@ export const ContactDetailSheet = ({
     setEditData({});
   };
 
-  const handleQuickTouch = () => {
+  const handleQuickTouch = async () => {
     const today = new Date().toISOString().split('T')[0];
     onUpdate(contact.id, { lastTouchDate: today });
+    await logActivity({
+      contactId: contact.id,
+      activityType: 'touch',
+      toValue: today,
+    });
     toast({ title: 'Touch logged', description: 'Last touch date updated to today.' });
+  };
+
+  const handleToggleWatch = async () => {
+    const newWatchedState = !contact.watched;
+    onUpdate(contact.id, { watched: newWatchedState });
+    await logActivity({
+      contactId: contact.id,
+      activityType: 'watched',
+      fromValue: contact.watched ? 'watched' : 'unwatched',
+      toValue: newWatchedState ? 'watched' : 'unwatched',
+    });
+    toast({ 
+      title: newWatchedState ? 'Added to Watch List' : 'Removed from Watch List',
+      description: newWatchedState 
+        ? `${contact.name} is now on your watch list.`
+        : `${contact.name} has been removed from your watch list.`
+    });
   };
 
   const handleScheduled = (date: string) => {
@@ -166,6 +190,26 @@ export const ContactDetailSheet = ({
 
           {/* Quick Actions Bar */}
           <div className="flex flex-wrap gap-2 mb-4">
+            <Button 
+              size="sm" 
+              variant={contact.watched ? "default" : "outline"}
+              onClick={handleToggleWatch}
+              className={cn(
+                contact.watched && "bg-accent text-accent-foreground hover:bg-accent/90"
+              )}
+            >
+              {contact.watched ? (
+                <>
+                  <Eye className="h-4 w-4 mr-1.5" />
+                  Watching
+                </>
+              ) : (
+                <>
+                  <EyeOff className="h-4 w-4 mr-1.5" />
+                  Watch
+                </>
+              )}
+            </Button>
             <Button size="sm" variant="secondary" onClick={handleQuickTouch}>
               <Clock className="h-4 w-4 mr-1.5" />
               Log Touch

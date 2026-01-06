@@ -37,6 +37,7 @@ export interface Contact {
   website?: string;
   aiSummary?: string;
   aiAvPartners?: string;
+  watched?: boolean;
 }
 
 export interface Column<T extends string> {

@@ -2,6 +2,8 @@ import { Contact } from '@/types/bdr';
 import { isOverdue, isDueSoon, needsAttention, getSuggestedActions } from '@/lib/actions';
 import { ContactCard } from './ContactCard';
 import { ActionCard } from './ActionCard';
+import { WatchList } from './WatchList';
+import { ActivityTimeline } from './ActivityTimeline';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertCircle, Clock, Star, TrendingUp } from 'lucide-react';
@@ -97,6 +99,9 @@ export const FocusView = ({ contacts, onCardClick }: FocusViewProps) => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Watch List - Front and Center */}
+      <WatchList contacts={contacts} onCardClick={onCardClick} />
 
       {/* Main Grid */}
       <div className="grid md:grid-cols-2 gap-6">
@@ -210,6 +215,9 @@ export const FocusView = ({ contacts, onCardClick }: FocusViewProps) => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Activity Timeline / Reporting */}
+      <ActivityTimeline maxItems={30} />
     </div>
   );
 };
