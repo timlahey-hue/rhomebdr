@@ -20,6 +20,7 @@ const mapDbToContact = (row: any): Contact => ({
   website: row.website,
   aiSummary: row.ai_summary,
   aiAvPartners: row.ai_av_partners,
+  watched: row.watched || false,
 });
 
 const mapContactToDb = (contact: Omit<Contact, 'id' | 'createdAt'>) => ({
@@ -84,6 +85,7 @@ export const useContacts = () => {
       if (updates.tags !== undefined) dbUpdates.tags = updates.tags;
       if (updates.board !== undefined) dbUpdates.board = updates.board;
       if (updates.stage !== undefined) dbUpdates.stage = updates.stage;
+      if (updates.watched !== undefined) dbUpdates.watched = updates.watched;
 
       const { error } = await supabase
         .from('contacts')
@@ -130,14 +132,36 @@ export const useContacts = () => {
     deleteMutation.mutate(id);
   };
 
-  const moveContact = (
+  const moveContact = async (
     id: string,
     newStage: Contact['stage'],
     newBoard?: Contact['board']
   ) => {
+    const contact = contacts.find((c) => c.id === id);
     const updates: Partial<Contact> = { stage: newStage };
     if (newBoard) updates.board = newBoard;
+    
     updateMutation.mutate({ id, updates });
+    
+    // Log activity for stage/board changes
+    if (contact) {
+      if (newBoard && contact.board !== newBoard) {
+        await supabase.from('contact_activity').insert({
+          contact_id: id,
+          activity_type: 'board_change',
+          from_value: contact.board,
+          to_value: newBoard,
+        });
+      }
+      if (contact.stage !== newStage) {
+        await supabase.from('contact_activity').insert({
+          contact_id: id,
+          activity_type: 'stage_change',
+          from_value: contact.stage,
+          to_value: newStage,
+        });
+      }
+    }
   };
 
   const getProspectContacts = () =>

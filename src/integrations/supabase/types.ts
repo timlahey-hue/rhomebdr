@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      contact_activity: {
+        Row: {
+          activity_type: string
+          contact_id: string
+          created_at: string
+          from_value: string | null
+          id: string
+          notes: string | null
+          to_value: string | null
+        }
+        Insert: {
+          activity_type: string
+          contact_id: string
+          created_at?: string
+          from_value?: string | null
+          id?: string
+          notes?: string | null
+          to_value?: string | null
+        }
+        Update: {
+          activity_type?: string
+          contact_id?: string
+          created_at?: string
+          from_value?: string | null
+          id?: string
+          notes?: string | null
+          to_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_activity_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contacts: {
         Row: {
           address: string | null
@@ -33,6 +71,7 @@ export type Database = {
           status_notes: string | null
           tags: string[] | null
           updated_at: string
+          watched: boolean
           website: string | null
         }
         Insert: {
@@ -53,6 +92,7 @@ export type Database = {
           status_notes?: string | null
           tags?: string[] | null
           updated_at?: string
+          watched?: boolean
           website?: string | null
         }
         Update: {
@@ -73,6 +113,7 @@ export type Database = {
           status_notes?: string | null
           tags?: string[] | null
           updated_at?: string
+          watched?: boolean
           website?: string | null
         }
         Relationships: []
