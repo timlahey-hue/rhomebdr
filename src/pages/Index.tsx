@@ -10,7 +10,18 @@ import { VoiceSettingsDialog } from '@/components/VoiceSettingsDialog';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Target, Users, LayoutGrid, Home, Sparkles, Upload } from 'lucide-react';
+import { Plus, Target, Users, LayoutGrid, Home, Sparkles, Upload, Trash2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { mockContacts } from '@/lib/mockData';
@@ -28,6 +39,7 @@ const Index = () => {
     moveContact,
     getProspectContacts,
     getActiveContacts,
+    clearBoard,
   } = useContacts();
 
   const [currentView, setCurrentView] = useState<ViewType>('focus');
@@ -98,6 +110,14 @@ const Index = () => {
   const handleImportContacts = async (contactsData: Omit<Contact, 'id' | 'createdAt'>[]) => {
     await importContacts(contactsData);
     toast({ title: 'Contacts imported', description: `${contactsData.length} contacts have been imported.` });
+  };
+
+  const handleClearBoard = async (board: 'prospect' | 'active') => {
+    await clearBoard(board);
+    toast({ 
+      title: 'Board cleared', 
+      description: `All ${board === 'prospect' ? 'Pipeline' : 'Active'} contacts have been removed.` 
+    });
   };
 
   if (isLoading) {
@@ -191,11 +211,38 @@ const Index = () => {
 
         {currentView === 'pipeline' && (
           <div className="animate-fade-in">
-            <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-foreground">Pipeline Relationships</h2>
-              <p className="text-muted-foreground text-sm mt-1">
-                Track prospects from research to referral partner
-              </p>
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-semibold text-foreground">Pipeline Relationships</h2>
+                <p className="text-muted-foreground text-sm mt-1">
+                  Track prospects from research to referral partner
+                </p>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="text-destructive hover:text-destructive gap-1.5">
+                    <Trash2 className="h-4 w-4" />
+                    Clear Board
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Clear Pipeline Board?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete all {getProspectContacts().length} contacts from the Pipeline board. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => handleClearBoard('prospect')}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Yes, clear all
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
             <KanbanBoard
               boardType="prospect"
@@ -208,11 +255,38 @@ const Index = () => {
 
         {currentView === 'active' && (
           <div className="animate-fade-in">
-            <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-foreground">Active Relationships</h2>
-              <p className="text-muted-foreground text-sm mt-1">
-                Nurture your existing partners and advocates
-              </p>
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-semibold text-foreground">Active Relationships</h2>
+                <p className="text-muted-foreground text-sm mt-1">
+                  Nurture your existing partners and advocates
+                </p>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="text-destructive hover:text-destructive gap-1.5">
+                    <Trash2 className="h-4 w-4" />
+                    Clear Board
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Clear Active Board?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete all {getActiveContacts().length} contacts from the Active board. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => handleClearBoard('active')}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Yes, clear all
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
             <KanbanBoard
               boardType="active"
