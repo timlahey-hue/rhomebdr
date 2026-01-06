@@ -61,18 +61,19 @@ export function GoalTracker({ contacts }: GoalTrackerProps) {
   };
 
   const handleAddLunch = async () => {
+    const selectedContactId = lunchContact === 'none' ? undefined : lunchContact || undefined;
     try {
       await addLunchMeeting.mutateAsync({
-        contactId: lunchContact || undefined,
+        contactId: selectedContactId,
         notes: lunchNotes || undefined,
         date: lunchDate,
       });
       
       // Also log as contact activity if a contact was selected
-      if (lunchContact) {
-        const contact = contacts.find(c => c.id === lunchContact);
+      if (selectedContactId) {
+        const contact = contacts.find(c => c.id === selectedContactId);
         await logActivity({
-          contactId: lunchContact,
+          contactId: selectedContactId,
           activityType: 'lunch_meeting',
           toValue: lunchDate,
           notes: lunchNotes || `Lunch meeting${contact ? ` with ${contact.name}` : ''}`,
@@ -236,7 +237,7 @@ export function GoalTracker({ contacts }: GoalTrackerProps) {
                       <SelectValue placeholder="Select a contact" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No specific contact</SelectItem>
+                      <SelectItem value="none">No specific contact</SelectItem>
                       {contacts.map((contact) => (
                         <SelectItem key={contact.id} value={contact.id}>
                           {contact.name} - {contact.company}
