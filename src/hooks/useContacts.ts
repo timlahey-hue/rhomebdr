@@ -86,6 +86,7 @@ export const useContacts = () => {
       if (updates.board !== undefined) dbUpdates.board = updates.board;
       if (updates.stage !== undefined) dbUpdates.stage = updates.stage;
       if (updates.watched !== undefined) dbUpdates.watched = updates.watched;
+      if (updates.website !== undefined) dbUpdates.website = updates.website;
 
       const { error } = await supabase
         .from('contacts')

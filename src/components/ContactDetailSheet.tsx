@@ -164,13 +164,41 @@ export const ContactDetailSheet = ({
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
           <SheetHeader className="pb-4">
             <div className="flex items-start justify-between">
-              <div>
-                <SheetTitle className="text-xl">{contact.name}</SheetTitle>
+              <div className="flex-1 min-w-0">
+                {isEditing ? (
+                  <Input
+                    value={displayData.name}
+                    onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                    className="text-xl font-semibold mb-1"
+                    placeholder="Contact name"
+                  />
+                ) : (
+                  <SheetTitle className="text-xl">{contact.name}</SheetTitle>
+                )}
                 <div className="flex items-center gap-1.5 text-muted-foreground mt-1">
-                  <Building2 className="h-4 w-4" />
-                  <span className="text-sm">{contact.company}</span>
+                  <Building2 className="h-4 w-4 flex-shrink-0" />
+                  {isEditing ? (
+                    <Input
+                      value={displayData.company}
+                      onChange={(e) => setEditData({ ...editData, company: e.target.value })}
+                      className="text-sm h-7"
+                      placeholder="Company name"
+                    />
+                  ) : (
+                    <span className="text-sm">{contact.company}</span>
+                  )}
                 </div>
-                {contact.website && (
+                {isEditing ? (
+                  <div className="flex items-center gap-1.5 text-muted-foreground mt-1">
+                    <Globe className="h-4 w-4 flex-shrink-0" />
+                    <Input
+                      value={displayData.website || ''}
+                      onChange={(e) => setEditData({ ...editData, website: e.target.value })}
+                      className="text-sm h-7"
+                      placeholder="Website URL"
+                    />
+                  </div>
+                ) : contact.website ? (
                   <div className="flex items-center gap-1.5 text-muted-foreground mt-1">
                     <Globe className="h-4 w-4" />
                     <a 
@@ -182,7 +210,7 @@ export const ContactDetailSheet = ({
                       {contact.website.replace(/^https?:\/\//, '').replace(/\/$/, '')}
                     </a>
                   </div>
-                )}
+                ) : null}
               </div>
               <RelationshipStrength strength={contact.relationshipStrength} size="md" />
             </div>
