@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       contacts: {
         Row: {
+          address: string | null
           board: string
           company: string
           created_at: string
@@ -30,8 +31,10 @@ export type Database = {
           status_notes: string | null
           tags: string[] | null
           updated_at: string
+          website: string | null
         }
         Insert: {
+          address?: string | null
           board: string
           company: string
           created_at?: string
@@ -46,8 +49,10 @@ export type Database = {
           status_notes?: string | null
           tags?: string[] | null
           updated_at?: string
+          website?: string | null
         }
         Update: {
+          address?: string | null
           board?: string
           company?: string
           created_at?: string
@@ -62,6 +67,7 @@ export type Database = {
           status_notes?: string | null
           tags?: string[] | null
           updated_at?: string
+          website?: string | null
         }
         Relationships: []
       }

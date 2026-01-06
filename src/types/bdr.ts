@@ -33,6 +33,8 @@ export interface Contact {
   board: 'prospect' | 'active';
   stage: ProspectStage | ActiveStage;
   createdAt: string;
+  address?: string;
+  website?: string;
 }
 
 export interface Column<T extends string> {

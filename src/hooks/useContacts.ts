@@ -16,6 +16,8 @@ const mapDbToContact = (row: any): Contact => ({
   board: row.board,
   stage: row.stage,
   createdAt: row.created_at,
+  address: row.address,
+  website: row.website,
 });
 
 const mapContactToDb = (contact: Omit<Contact, 'id' | 'createdAt'>) => ({
@@ -30,6 +32,8 @@ const mapContactToDb = (contact: Omit<Contact, 'id' | 'createdAt'>) => ({
   tags: contact.tags,
   board: contact.board,
   stage: contact.stage,
+  address: contact.address,
+  website: contact.website,
 });
 
 export const useContacts = () => {
@@ -109,6 +113,13 @@ export const useContacts = () => {
     return addMutation.mutateAsync(contact);
   };
 
+  const importContacts = async (contacts: Omit<Contact, 'id' | 'createdAt'>[]) => {
+    const dbContacts = contacts.map(mapContactToDb);
+    const { error } = await supabase.from('contacts').insert(dbContacts);
+    if (error) throw error;
+    queryClient.invalidateQueries({ queryKey: ['contacts'] });
+  };
+
   const updateContact = (id: string, updates: Partial<Contact>) => {
     updateMutation.mutate({ id, updates });
   };
@@ -137,6 +148,7 @@ export const useContacts = () => {
     contacts,
     isLoading,
     addContact,
+    importContacts,
     updateContact,
     deleteContact,
     moveContact,
