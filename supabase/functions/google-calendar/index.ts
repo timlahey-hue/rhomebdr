@@ -128,9 +128,16 @@ serve(async (req) => {
     }
 
     // Return OAuth URL for initial auth
-    const { data: body } = await req.json().catch(() => ({ data: {} }));
-    const redirectUri = body?.redirect_uri || '';
-    
+    if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+      throw new Error('Google OAuth is not configured (missing client ID/secret)');
+    }
+
+    const body = await req.json().catch(() => ({} as Record<string, unknown>));
+    const redirectUri = typeof body?.redirect_uri === 'string' ? body.redirect_uri : '';
+
+    if (!redirectUri) {
+      throw new Error('Missing redirect_uri');
+    }
     const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
     authUrl.searchParams.set('client_id', GOOGLE_CLIENT_ID!);
     authUrl.searchParams.set('redirect_uri', redirectUri);
