@@ -3,8 +3,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Upload, FileSpreadsheet, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { Contact, RoleType } from '@/types/bdr';
+import { Contact, RoleType, PROSPECT_COLUMNS, ACTIVE_COLUMNS } from '@/types/bdr';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ImportContactsDialogProps {
@@ -58,20 +59,11 @@ const mapRole = (type: string): RoleType => {
   return 'Other';
 };
 
-const mapStatus = (status: string): 'new-relationship' | 'active-healthy' | 'under-engaged' => {
-  const normalized = status.toLowerCase().trim();
-  if (normalized === 'engaged' || normalized === 'warm') return 'active-healthy';
-  if (normalized === 'cold') return 'under-engaged';
-  return 'new-relationship';
-};
-
 const parseDate = (dateStr: string): string | null => {
   if (!dateStr) return null;
   
-  // Try to parse various date formats
   const normalized = dateStr.trim().toLowerCase();
   
-  // Handle formats like "Fall 2025", "Summer 2025", "~2024"
   const seasonMatch = normalized.match(/(fall|summer|spring|winter)\s*(\d{4})/i);
   if (seasonMatch) {
     const [, season, year] = seasonMatch;
@@ -81,13 +73,11 @@ const parseDate = (dateStr: string): string | null => {
     return `${year}-${monthMap[season.toLowerCase()]}-01`;
   }
   
-  // Handle ~year or year format
   const yearMatch = normalized.match(/~?(\d{4})/);
   if (yearMatch) {
     return `${yearMatch[1]}-01-01`;
   }
   
-  // Handle M.D.YY format like "1.5.26"
   const mdyMatch = normalized.match(/(\d{1,2})\.(\d{1,2})\.(\d{2})/);
   if (mdyMatch) {
     const [, month, day, year] = mdyMatch;
@@ -106,7 +96,16 @@ export const ImportContactsDialog = ({
   const [parsedContacts, setParsedContacts] = useState<ParsedContact[]>([]);
   const [isImporting, setIsImporting] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [selectedBoard, setSelectedBoard] = useState<'prospect' | 'active'>('active');
+  const [selectedStage, setSelectedStage] = useState<string>('new-relationship');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const columns = selectedBoard === 'prospect' ? PROSPECT_COLUMNS : ACTIVE_COLUMNS;
+
+  const handleBoardChange = (board: 'prospect' | 'active') => {
+    setSelectedBoard(board);
+    setSelectedStage(board === 'prospect' ? 'researching' : 'new-relationship');
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -175,14 +174,14 @@ export const ImportContactsDialog = ({
         name: c.name,
         company: c.company,
         role: c.role,
-        relationshipType: 'Active Partner',
+        relationshipType: selectedBoard === 'active' ? 'Active Partner' : 'Target',
         lastTouchDate: parseDate(c.lastTouch || ''),
         nextTouchDate: null,
         statusNotes: '',
         relationshipStrength: c.status?.toLowerCase() === 'engaged' ? 3 : 1,
         tags: [],
-        board: 'active' as const,
-        stage: mapStatus(c.status || ''),
+        board: selectedBoard,
+        stage: selectedStage as Contact['stage'],
         address: c.address,
         website: c.website,
       }));
@@ -199,6 +198,8 @@ export const ImportContactsDialog = ({
   const handleClose = () => {
     setParsedContacts([]);
     setFileName(null);
+    setSelectedBoard('active');
+    setSelectedStage('new-relationship');
     onOpenChange(false);
   };
 
@@ -209,13 +210,42 @@ export const ImportContactsDialog = ({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Import Active Contacts</DialogTitle>
+          <DialogTitle>Import Contacts</DialogTitle>
           <DialogDescription>
-            Upload a CSV file with columns: Specifier, Type, Address, Main Contact, Website, Status, Last
+            Upload a CSV file to batch import contacts
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
+          {/* Board & Stage Selection */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Import to Board</Label>
+              <Select value={selectedBoard} onValueChange={(v: 'prospect' | 'active') => handleBoardChange(v)}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="prospect">Pipeline</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Starting Stage</Label>
+              <Select value={selectedStage} onValueChange={setSelectedStage}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {columns.map((col) => (
+                    <SelectItem key={col.id} value={col.id}>{col.title}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
           {/* File Upload */}
           <div>
             <Label htmlFor="csv-file">CSV File</Label>

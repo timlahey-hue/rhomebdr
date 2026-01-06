@@ -44,10 +44,43 @@ export const ContactDetailSheet = ({
   const displayData = isEditing ? { ...contact, ...editData } : contact;
 
   const handleSave = () => {
-    onUpdate(contact.id, editData);
+    // Check if relationship type changed from Target to Active Partner
+    if (
+      editData.relationshipType === 'Active Partner' && 
+      contact.relationshipType === 'Target' && 
+      contact.board === 'prospect'
+    ) {
+      // Move to active board
+      onUpdate(contact.id, { 
+        ...editData, 
+        board: 'active', 
+        stage: 'new-relationship' 
+      });
+      toast({ 
+        title: 'Moved to Active Relationships', 
+        description: `${contact.name} has been promoted to Active Partner.` 
+      });
+    } else if (
+      editData.relationshipType === 'Target' && 
+      contact.relationshipType !== 'Target' && 
+      contact.board === 'active'
+    ) {
+      // Move back to prospect board
+      onUpdate(contact.id, { 
+        ...editData, 
+        board: 'prospect', 
+        stage: 'warm-relationship' 
+      });
+      toast({ 
+        title: 'Moved to Pipeline', 
+        description: `${contact.name} has been moved back to Pipeline.` 
+      });
+    } else {
+      onUpdate(contact.id, editData);
+      toast({ title: 'Contact updated', description: 'Changes saved successfully.' });
+    }
     setIsEditing(false);
     setEditData({});
-    toast({ title: 'Contact updated', description: 'Changes saved successfully.' });
   };
 
   const handleQuickTouch = () => {
