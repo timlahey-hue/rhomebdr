@@ -5,11 +5,12 @@ import { KanbanBoard } from '@/components/KanbanBoard';
 import { FocusView } from '@/components/FocusView';
 import { ContactDetailSheet } from '@/components/ContactDetailSheet';
 import { AddContactDialog } from '@/components/AddContactDialog';
+import { ImportContactsDialog } from '@/components/ImportContactsDialog';
 import { VoiceSettingsDialog } from '@/components/VoiceSettingsDialog';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Target, Users, LayoutGrid, Home, Sparkles } from 'lucide-react';
+import { Plus, Target, Users, LayoutGrid, Home, Sparkles, Upload } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { mockContacts } from '@/lib/mockData';
@@ -21,6 +22,7 @@ const Index = () => {
     contacts,
     isLoading,
     addContact,
+    importContacts,
     updateContact,
     deleteContact,
     moveContact,
@@ -32,6 +34,7 @@ const Index = () => {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [hasSeeded, setHasSeeded] = useState(false);
 
@@ -92,6 +95,11 @@ const Index = () => {
     toast({ title: 'Contact added', description: `${contactData.name} has been added.` });
   };
 
+  const handleImportContacts = async (contactsData: Omit<Contact, 'id' | 'createdAt'>[]) => {
+    await importContacts(contactsData);
+    toast({ title: 'Contacts imported', description: `${contactsData.length} contacts have been imported.` });
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -146,6 +154,14 @@ const Index = () => {
                 title="Email Voice Settings"
               >
                 <Sparkles className="h-5 w-5" />
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setIsImportOpen(true)}
+                className="gap-1.5"
+              >
+                <Upload className="h-4 w-4" />
+                <span className="hidden sm:inline">Import</span>
               </Button>
               <Button
                 onClick={() => setIsAddOpen(true)}
@@ -228,6 +244,12 @@ const Index = () => {
       <VoiceSettingsDialog
         open={isVoiceOpen}
         onOpenChange={setIsVoiceOpen}
+      />
+
+      <ImportContactsDialog
+        open={isImportOpen}
+        onOpenChange={setIsImportOpen}
+        onImport={handleImportContacts}
       />
     </div>
   );
