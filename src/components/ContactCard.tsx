@@ -2,8 +2,9 @@ import { Contact } from '@/types/bdr';
 import { RelationshipStrength } from './RelationshipStrength';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { Calendar, Clock, Building2, Globe } from 'lucide-react';
+import { Calendar, Clock, Building2, Globe, Utensils } from 'lucide-react';
 import { isOverdue, isDueSoon, needsAttention } from '@/lib/actions';
+import { useContactLunchMeetings } from '@/hooks/useBDRGoals';
 
 interface ContactCardProps {
   contact: Contact;
@@ -41,6 +42,8 @@ export const ContactCard = ({ contact, onClick, isDragging }: ContactCardProps) 
   const overdue = isOverdue(contact);
   const dueSoon = isDueSoon(contact);
   const attention = needsAttention(contact);
+  const { lunchMeetings } = useContactLunchMeetings(contact.id);
+  const hasLunchMeetings = lunchMeetings.length > 0;
 
   return (
     <div
@@ -83,7 +86,7 @@ export const ContactCard = ({ contact, onClick, isDragging }: ContactCardProps) 
       )}
 
       {/* Role badge */}
-      <div className="flex items-center gap-1.5 mb-2">
+      <div className="flex items-center gap-1.5 mb-2 flex-wrap">
         <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-normal">
           {contact.role}
         </Badge>
@@ -96,6 +99,12 @@ export const ContactCard = ({ contact, onClick, isDragging }: ContactCardProps) 
         >
           {contact.relationshipType}
         </Badge>
+        {hasLunchMeetings && (
+          <Badge className="text-[10px] px-1.5 py-0 font-normal bg-green-500/20 text-green-600 border-green-500/30 hover:bg-green-500/30">
+            <Utensils className="h-2.5 w-2.5 mr-0.5" />
+            Lunch
+          </Badge>
+        )}
       </div>
 
       {/* Dates */}
