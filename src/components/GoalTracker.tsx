@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Clock, Utensils, Plus, Trash2, Target, TrendingUp, Calendar } from 'lucide-react';
 import { useBDRGoals } from '@/hooks/useBDRGoals';
+import { useContactActivity } from '@/hooks/useContactActivity';
 import { Contact } from '@/types/bdr';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
@@ -31,6 +32,8 @@ export function GoalTracker({ contacts }: GoalTrackerProps) {
     deleteTimeLog,
     deleteLunchMeeting,
   } = useBDRGoals();
+
+  const { logActivity } = useContactActivity();
 
   const [timeDialogOpen, setTimeDialogOpen] = useState(false);
   const [lunchDialogOpen, setLunchDialogOpen] = useState(false);
@@ -64,6 +67,18 @@ export function GoalTracker({ contacts }: GoalTrackerProps) {
         notes: lunchNotes || undefined,
         date: lunchDate,
       });
+      
+      // Also log as contact activity if a contact was selected
+      if (lunchContact) {
+        const contact = contacts.find(c => c.id === lunchContact);
+        await logActivity({
+          contactId: lunchContact,
+          activityType: 'lunch_meeting',
+          toValue: lunchDate,
+          notes: lunchNotes || `Lunch meeting${contact ? ` with ${contact.name}` : ''}`,
+        });
+      }
+      
       toast.success('Lunch meeting logged');
       setLunchContact('');
       setLunchNotes('');

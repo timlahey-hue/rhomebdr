@@ -2,7 +2,7 @@ import { useAllContactActivity } from '@/hooks/useContactActivity';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Activity, ArrowRight, Eye, Calendar, GitBranch } from 'lucide-react';
+import { Activity, ArrowRight, Eye, Calendar, GitBranch, Utensils } from 'lucide-react';
 import { formatDistanceToNow, differenceInDays, parseISO } from 'date-fns';
 
 const getActivityIcon = (type: string) => {
@@ -15,6 +15,8 @@ const getActivityIcon = (type: string) => {
       return <Calendar className="h-3.5 w-3.5" />;
     case 'watched':
       return <Eye className="h-3.5 w-3.5" />;
+    case 'lunch_meeting':
+      return <Utensils className="h-3.5 w-3.5" />;
     default:
       return <Activity className="h-3.5 w-3.5" />;
   }
@@ -32,6 +34,8 @@ const getActivityLabel = (type: string) => {
       return 'Watch Status';
     case 'created':
       return 'Created';
+    case 'lunch_meeting':
+      return 'Lunch Meeting';
     default:
       return type;
   }
