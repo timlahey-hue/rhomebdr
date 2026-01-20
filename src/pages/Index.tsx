@@ -10,7 +10,8 @@ import { VoiceSettingsDialog } from '@/components/VoiceSettingsDialog';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Target, Users, LayoutGrid, Home, Sparkles, Upload, Trash2 } from 'lucide-react';
+import { Plus, Target, Users, LayoutGrid, Home, Sparkles, Upload, Trash2, Download } from 'lucide-react';
+import { exportContactsToCSV } from '@/lib/exportContacts';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -227,31 +228,43 @@ const Index = () => {
                   Track prospects from research to referral partner
                 </p>
               </div>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="text-destructive hover:text-destructive gap-1.5">
-                    <Trash2 className="h-4 w-4" />
-                    Clear Board
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Clear Pipeline Board?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will permanently delete all {getProspectContacts().length} contacts from the Pipeline board. This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => handleClearBoard('prospect')}
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    >
-                      Yes, clear all
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => exportContactsToCSV(getProspectContacts(), 'pipeline')}
+                  className="gap-1.5"
+                  disabled={getProspectContacts().length === 0}
+                >
+                  <Download className="h-4 w-4" />
+                  Export
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="text-destructive hover:text-destructive gap-1.5">
+                      <Trash2 className="h-4 w-4" />
+                      Clear Board
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Clear Pipeline Board?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently delete all {getProspectContacts().length} contacts from the Pipeline board. This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleClearBoard('prospect')}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Yes, clear all
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </div>
             <KanbanBoard
               boardType="prospect"
@@ -271,31 +284,43 @@ const Index = () => {
                   Nurture your existing partners and advocates
                 </p>
               </div>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="text-destructive hover:text-destructive gap-1.5">
-                    <Trash2 className="h-4 w-4" />
-                    Clear Board
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Clear Active Board?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will permanently delete all {getActiveContacts().length} contacts from the Active board. This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => handleClearBoard('active')}
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    >
-                      Yes, clear all
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => exportContactsToCSV(getActiveContacts(), 'active')}
+                  className="gap-1.5"
+                  disabled={getActiveContacts().length === 0}
+                >
+                  <Download className="h-4 w-4" />
+                  Export
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="text-destructive hover:text-destructive gap-1.5">
+                      <Trash2 className="h-4 w-4" />
+                      Clear Board
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Clear Active Board?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently delete all {getActiveContacts().length} contacts from the Active board. This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleClearBoard('active')}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Yes, clear all
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </div>
             <KanbanBoard
               boardType="active"
