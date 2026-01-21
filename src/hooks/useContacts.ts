@@ -21,6 +21,7 @@ const mapDbToContact = (row: any): Contact => ({
   aiSummary: row.ai_summary,
   aiAvPartners: row.ai_av_partners,
   watched: row.watched || false,
+  tier: row.tier || undefined,
 });
 
 const mapContactToDb = (contact: Omit<Contact, 'id' | 'createdAt'>) => ({
@@ -37,6 +38,7 @@ const mapContactToDb = (contact: Omit<Contact, 'id' | 'createdAt'>) => ({
   stage: contact.stage,
   address: contact.address,
   website: contact.website,
+  tier: contact.tier || null,
 });
 
 export const useContacts = () => {
@@ -87,6 +89,7 @@ export const useContacts = () => {
       if (updates.stage !== undefined) dbUpdates.stage = updates.stage;
       if (updates.watched !== undefined) dbUpdates.watched = updates.watched;
       if (updates.website !== undefined) dbUpdates.website = updates.website;
+      if (updates.tier !== undefined) dbUpdates.tier = updates.tier;
 
       const { error } = await supabase
         .from('contacts')

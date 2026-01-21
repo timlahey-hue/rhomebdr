@@ -22,6 +22,7 @@ export const exportContactsToCSV = (contacts: Contact[], boardName: string) => {
     'Relationship Strength',
     'Tags',
     'Stage',
+    'Tier',
     'Notes'
   ];
 
@@ -37,6 +38,7 @@ export const exportContactsToCSV = (contacts: Contact[], boardName: string) => {
     contact.relationshipStrength.toString(),
     (contact.tags || []).join('; '),
     getStageTitle(contact),
+    contact.tier?.toString() || '',
     contact.statusNotes || ''
   ]);
 
