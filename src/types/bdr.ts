@@ -19,6 +19,8 @@ export type ActiveStage =
   | 'at-risk'
   | 'paused';
 
+export type TierLevel = 1 | 2 | 3;
+
 export interface Contact {
   id: string;
   name: string;
@@ -38,6 +40,7 @@ export interface Contact {
   aiSummary?: string;
   aiAvPartners?: string;
   watched?: boolean;
+  tier?: TierLevel;
 }
 
 export interface Column<T extends string> {

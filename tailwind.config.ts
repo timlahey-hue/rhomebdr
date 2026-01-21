@@ -91,6 +91,16 @@ export default {
           medium: "hsl(var(--priority-medium))",
           low: "hsl(var(--priority-low))",
         },
+        tier: {
+          1: "hsl(var(--tier-1))",
+          "1-foreground": "hsl(var(--tier-1-foreground))",
+          "1-ring": "hsl(var(--tier-1-ring))",
+          "1-bg": "hsl(var(--tier-1-bg))",
+          2: "hsl(var(--tier-2))",
+          "2-foreground": "hsl(var(--tier-2-foreground))",
+          3: "hsl(var(--tier-3))",
+          "3-foreground": "hsl(var(--tier-3-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

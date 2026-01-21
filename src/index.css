@@ -75,6 +75,16 @@
     --priority-medium: 38 70% 50%;
     --priority-low: 220 15% 60%;
 
+    /* Tier colors */
+    --tier-1: 43 96% 56%;
+    --tier-1-foreground: 0 0% 100%;
+    --tier-1-ring: 43 96% 50%;
+    --tier-1-bg: 43 100% 97%;
+    --tier-2: 220 13% 46%;
+    --tier-2-foreground: 0 0% 100%;
+    --tier-3: 220 13% 80%;
+    --tier-3-foreground: 220 13% 30%;
+
     /* Shadows */
     --shadow-sm: 0 1px 2px 0 hsl(220 20% 15% / 0.03);
     --shadow-md: 0 4px 6px -1px hsl(220 20% 15% / 0.05), 0 2px 4px -2px hsl(220 20% 15% / 0.03);
@@ -146,6 +156,16 @@
     --column-advocate: 130 18% 14%;
     --column-risk: 0 25% 16%;
     --column-paused: 220 12% 14%;
+
+    /* Tier colors - dark mode */
+    --tier-1: 43 96% 56%;
+    --tier-1-foreground: 220 20% 10%;
+    --tier-1-ring: 43 96% 45%;
+    --tier-1-bg: 43 50% 15%;
+    --tier-2: 220 13% 60%;
+    --tier-2-foreground: 220 20% 10%;
+    --tier-3: 220 13% 40%;
+    --tier-3-foreground: 220 13% 85%;
 
     /* Shadows - darker */
     --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.2);

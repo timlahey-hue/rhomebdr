@@ -1,10 +1,35 @@
-import { Contact } from '@/types/bdr';
+import { Contact, TierLevel } from '@/types/bdr';
 import { RelationshipStrength } from './RelationshipStrength';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { Calendar, Clock, Building2, Globe, Utensils } from 'lucide-react';
+import { Calendar, Clock, Building2, Globe, Utensils, Star } from 'lucide-react';
 import { isOverdue, isDueSoon, needsAttention } from '@/lib/actions';
 import { useContactLunchMeetings } from '@/hooks/useBDRGoals';
+
+const getTierStyles = (tier?: TierLevel) => {
+  switch (tier) {
+    case 1:
+      return {
+        card: 'ring-2 ring-tier-1-ring bg-tier-1-bg',
+        badge: 'bg-tier-1 text-tier-1-foreground',
+        label: 'Tier 1'
+      };
+    case 2:
+      return {
+        card: 'ring-1 ring-tier-2/30',
+        badge: 'bg-tier-2 text-tier-2-foreground',
+        label: 'Tier 2'
+      };
+    case 3:
+      return {
+        card: '',
+        badge: 'bg-tier-3 text-tier-3-foreground',
+        label: 'Tier 3'
+      };
+    default:
+      return null;
+  }
+};
 
 interface ContactCardProps {
   contact: Contact;
@@ -44,6 +69,7 @@ export const ContactCard = ({ contact, onClick, isDragging }: ContactCardProps) 
   const attention = needsAttention(contact);
   const { lunchMeetings } = useContactLunchMeetings(contact.id);
   const hasLunchMeetings = lunchMeetings.length > 0;
+  const tierStyles = getTierStyles(contact.tier);
 
   return (
     <div
@@ -52,7 +78,8 @@ export const ContactCard = ({ contact, onClick, isDragging }: ContactCardProps) 
         'group bg-card rounded-lg p-3 cursor-pointer transition-card border border-border/60',
         'hover:shadow-card-hover hover:border-accent/30',
         isDragging && 'shadow-card-hover rotate-2 scale-105',
-        attention && 'border-l-2 border-l-highlight'
+        attention && 'border-l-2 border-l-highlight',
+        tierStyles?.card
       )}
     >
       {/* Header */}
@@ -87,6 +114,12 @@ export const ContactCard = ({ contact, onClick, isDragging }: ContactCardProps) 
 
       {/* Role badge */}
       <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+        {tierStyles && (
+          <Badge className={cn("text-[10px] px-1.5 py-0 font-medium", tierStyles.badge)}>
+            <Star className="h-2.5 w-2.5 mr-0.5" />
+            {tierStyles.label}
+          </Badge>
+        )}
         <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-normal">
           {contact.role}
         </Badge>

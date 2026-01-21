@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Contact, ROLE_OPTIONS, RELATIONSHIP_TYPE_OPTIONS } from '@/types/bdr';
+import { Contact, ROLE_OPTIONS, RELATIONSHIP_TYPE_OPTIONS, TierLevel } from '@/types/bdr';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -470,6 +470,36 @@ export const ContactDetailSheet = ({
                 )}
               </div>
             </div>
+
+            {/* Tier Selection - Pipeline only */}
+            {contact.board === 'prospect' && (
+              <div>
+                <Label className="text-xs text-muted-foreground">Priority Tier</Label>
+                {isEditing ? (
+                  <Select
+                    value={displayData.tier?.toString() || 'none'}
+                    onValueChange={(value) => setEditData({ 
+                      ...editData, 
+                      tier: value === 'none' ? undefined : parseInt(value) as TierLevel 
+                    })}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select tier" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">No Tier</SelectItem>
+                      <SelectItem value="1">Tier 1 - Top Priority</SelectItem>
+                      <SelectItem value="2">Tier 2 - Medium Priority</SelectItem>
+                      <SelectItem value="3">Tier 3 - Low Priority</SelectItem>
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <p className="text-sm font-medium mt-1">
+                    {displayData.tier ? `Tier ${displayData.tier}` : 'Not set'}
+                  </p>
+                )}
+              </div>
+            )}
 
             <div>
               <Label className="text-xs text-muted-foreground">Relationship Strength</Label>

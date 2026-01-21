@@ -1,11 +1,18 @@
 import { useState } from 'react';
-import { Contact, ROLE_OPTIONS, RELATIONSHIP_TYPE_OPTIONS, PROSPECT_COLUMNS, ACTIVE_COLUMNS } from '@/types/bdr';
+import { Contact, ROLE_OPTIONS, RELATIONSHIP_TYPE_OPTIONS, PROSPECT_COLUMNS, ACTIVE_COLUMNS, TierLevel } from '@/types/bdr';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+const TIER_OPTIONS: { value: string; label: string }[] = [
+  { value: 'none', label: 'No Tier' },
+  { value: '1', label: 'Tier 1 - Top Priority' },
+  { value: '2', label: 'Tier 2 - Medium Priority' },
+  { value: '3', label: 'Tier 3 - Low Priority' },
+];
 
 interface AddContactDialogProps {
   open: boolean;
@@ -45,6 +52,7 @@ export const AddContactDialog = ({
       tags: formData.tags || [],
       board: formData.board!,
       stage: formData.stage!,
+      tier: formData.tier,
     });
 
     // Reset form
@@ -160,6 +168,26 @@ export const AddContactDialog = ({
                 <SelectContent>
                   {RELATIONSHIP_TYPE_OPTIONS.map((type) => (
                     <SelectItem key={type} value={type}>{type}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label>Tier (Pipeline only)</Label>
+              <Select
+                value={formData.tier?.toString() || 'none'}
+                onValueChange={(value) => setFormData({ 
+                  ...formData, 
+                  tier: value === 'none' ? undefined : parseInt(value) as TierLevel 
+                })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select tier" />
+                </SelectTrigger>
+                <SelectContent>
+                  {TIER_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

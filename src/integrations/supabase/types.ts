@@ -94,6 +94,7 @@ export type Database = {
           stage: string
           status_notes: string | null
           tags: string[] | null
+          tier: number | null
           updated_at: string
           watched: boolean
           website: string | null
@@ -115,6 +116,7 @@ export type Database = {
           stage: string
           status_notes?: string | null
           tags?: string[] | null
+          tier?: number | null
           updated_at?: string
           watched?: boolean
           website?: string | null
@@ -136,6 +138,7 @@ export type Database = {
           stage?: string
           status_notes?: string | null
           tags?: string[] | null
+          tier?: number | null
           updated_at?: string
           watched?: boolean
           website?: string | null
