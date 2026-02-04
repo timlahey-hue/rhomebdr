@@ -2,6 +2,8 @@ export type RoleType = 'Architect' | 'Builder' | 'Interior Designer' | 'Landscap
 
 export type RelationshipType = 'Target' | 'Active Partner' | 'Influencer';
 
+export type CompanyType = 'Design Build' | 'Architecture Firm' | 'Contractor' | 'Other';
+
 export type ProspectStage = 
   | 'researching'
   | 'identified'
@@ -37,10 +39,18 @@ export interface Contact {
   createdAt: string;
   address?: string;
   website?: string;
+  phone?: string;
+  email?: string;
+  title?: string;
+  companyType?: CompanyType;
   aiSummary?: string;
   aiAvPartners?: string;
   watched?: boolean;
   tier?: TierLevel;
+  secondaryContactName?: string;
+  secondaryContactTitle?: string;
+  secondaryContactPhone?: string;
+  secondaryContactEmail?: string;
 }
 
 export interface Column<T extends string> {
@@ -81,4 +91,11 @@ export const RELATIONSHIP_TYPE_OPTIONS: RelationshipType[] = [
   'Target',
   'Active Partner',
   'Influencer',
+];
+
+export const COMPANY_TYPE_OPTIONS: CompanyType[] = [
+  'Design Build',
+  'Architecture Firm',
+  'Contractor',
+  'Other',
 ];

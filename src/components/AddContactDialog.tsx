@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Contact, ROLE_OPTIONS, RELATIONSHIP_TYPE_OPTIONS, PROSPECT_COLUMNS, ACTIVE_COLUMNS, TierLevel } from '@/types/bdr';
+import { Contact, ROLE_OPTIONS, RELATIONSHIP_TYPE_OPTIONS, COMPANY_TYPE_OPTIONS, PROSPECT_COLUMNS, ACTIVE_COLUMNS, TierLevel } from '@/types/bdr';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -52,7 +52,15 @@ export const AddContactDialog = ({
       tags: formData.tags || [],
       board: formData.board!,
       stage: formData.stage!,
+      phone: formData.phone,
+      email: formData.email,
+      title: formData.title,
+      companyType: formData.companyType,
       tier: formData.tier,
+      secondaryContactName: formData.secondaryContactName,
+      secondaryContactTitle: formData.secondaryContactTitle,
+      secondaryContactPhone: formData.secondaryContactPhone,
+      secondaryContactEmail: formData.secondaryContactEmail,
     });
 
     // Reset form
@@ -171,6 +179,36 @@ export const AddContactDialog = ({
                   ))}
                 </SelectContent>
               </Select>
+             </div>
+
+             <div>
+              <Label>Title</Label>
+              <Input
+                value={formData.title || ''}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                placeholder="e.g., Principal Architect"
+              />
+            </div>
+
+             <div>
+              <Label>Company Type</Label>
+              <Select
+                value={formData.companyType || 'none'}
+                onValueChange={(value) => setFormData({ 
+                  ...formData, 
+                  companyType: value === 'none' ? undefined : value as any
+                })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Select type</SelectItem>
+                  {COMPANY_TYPE_OPTIONS.map((type) => (
+                    <SelectItem key={type} value={type}>{type}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
@@ -191,6 +229,79 @@ export const AddContactDialog = ({
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+             <div className="col-span-2">
+              <Label htmlFor="phone">Phone</Label>
+              <Input
+                id="phone"
+                value={formData.phone || ''}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder="+1 (555) 123-4567"
+              />
+            </div>
+
+             <div className="col-span-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email || ''}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="name@company.com"
+              />
+            </div>
+
+             <div className="col-span-2">
+              <div className="border rounded-lg p-3 bg-muted/30 space-y-3">
+                <h4 className="text-sm font-medium">Secondary Contact (Optional)</h4>
+                
+                <div>
+                  <Label htmlFor="secondary-name" className="text-xs">Name</Label>
+                  <Input
+                    id="secondary-name"
+                    value={formData.secondaryContactName || ''}
+                    onChange={(e) => setFormData({ ...formData, secondaryContactName: e.target.value })}
+                    placeholder="e.g., Estimator or Project Manager"
+                    className="mt-1"
+                  />
+                </div>
+
+                 <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label htmlFor="secondary-title" className="text-xs">Title</Label>
+                    <Input
+                      id="secondary-title"
+                      value={formData.secondaryContactTitle || ''}
+                      onChange={(e) => setFormData({ ...formData, secondaryContactTitle: e.target.value })}
+                      placeholder="Title"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="secondary-phone" className="text-xs">Phone</Label>
+                    <Input
+                      id="secondary-phone"
+                      value={formData.secondaryContactPhone || ''}
+                      onChange={(e) => setFormData({ ...formData, secondaryContactPhone: e.target.value })}
+                      placeholder="Phone"
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+
+                 <div>
+                  <Label htmlFor="secondary-email" className="text-xs">Email</Label>
+                  <Input
+                    id="secondary-email"
+                    type="email"
+                    value={formData.secondaryContactEmail || ''}
+                    onChange={(e) => setFormData({ ...formData, secondaryContactEmail: e.target.value })}
+                    placeholder="email@company.com"
+                    className="mt-1"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="col-span-2">

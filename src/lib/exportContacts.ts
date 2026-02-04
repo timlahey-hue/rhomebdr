@@ -13,9 +13,14 @@ export const exportContactsToCSV = (contacts: Contact[], boardName: string) => {
   const headers = [
     'Company',
     'Contact Name',
+    'Title',
+    'Role',
     'Type',
+    'Phone',
+    'Email',
     'Address',
     'Website',
+    'Company Type',
     'Status',
     'Last Touch',
     'Next Touch',
@@ -23,15 +28,24 @@ export const exportContactsToCSV = (contacts: Contact[], boardName: string) => {
     'Tags',
     'Stage',
     'Tier',
-    'Notes'
+    'Notes',
+    'Secondary Contact Name',
+    'Secondary Contact Title',
+    'Secondary Contact Phone',
+    'Secondary Contact Email'
   ];
 
   const rows = contacts.map(contact => [
     contact.company,
     contact.name,
+    contact.title || '',
     contact.role,
+    contact.relationshipType,
+    contact.phone || '',
+    contact.email || '',
     contact.address || '',
     contact.website || '',
+    contact.companyType || '',
     contact.relationshipType,
     contact.lastTouchDate || '',
     contact.nextTouchDate || '',
@@ -39,7 +53,11 @@ export const exportContactsToCSV = (contacts: Contact[], boardName: string) => {
     (contact.tags || []).join('; '),
     getStageTitle(contact),
     contact.tier?.toString() || '',
-    contact.statusNotes || ''
+    contact.statusNotes || '',
+    contact.secondaryContactName || '',
+    contact.secondaryContactTitle || '',
+    contact.secondaryContactPhone || '',
+    contact.secondaryContactEmail || ''
   ]);
 
   // Escape CSV values
