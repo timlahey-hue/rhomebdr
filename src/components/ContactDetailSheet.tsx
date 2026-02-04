@@ -596,6 +596,20 @@ export const ContactDetailSheet = ({
               </div>
             </div>
 
+            <div>
+              <Label className="text-xs text-muted-foreground">Address</Label>
+              {isEditing ? (
+                <Input
+                  value={displayData.address || ''}
+                  onChange={(e) => setEditData({ ...editData, address: e.target.value })}
+                  placeholder="123 Main St, City, State 12345"
+                  className="mt-1"
+                />
+              ) : (
+                <p className="text-sm font-medium mt-1">{displayData.address || '—'}</p>
+              )}
+            </div>
+
             {/* Secondary Contact */}
             {(displayData.secondaryContactName || isEditing) && (
               <div className="border rounded-lg p-3 bg-muted/30 space-y-3">

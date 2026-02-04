@@ -252,6 +252,16 @@ export const AddContactDialog = ({
               />
             </div>
 
+            <div className="col-span-2">
+              <Label htmlFor="address">Address</Label>
+              <Input
+                id="address"
+                value={formData.address || ''}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                placeholder="123 Main St, City, State 12345"
+              />
+            </div>
+
              <div className="col-span-2">
               <div className="border rounded-lg p-3 bg-muted/30 space-y-3">
                 <h4 className="text-sm font-medium">Secondary Contact (Optional)</h4>
