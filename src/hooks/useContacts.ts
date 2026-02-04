@@ -18,10 +18,18 @@ const mapDbToContact = (row: any): Contact => ({
   createdAt: row.created_at,
   address: row.address,
   website: row.website,
+  phone: row.phone,
+  email: row.email,
+  title: row.title,
+  companyType: row.company_type,
   aiSummary: row.ai_summary,
   aiAvPartners: row.ai_av_partners,
   watched: row.watched || false,
   tier: row.tier || undefined,
+  secondaryContactName: row.secondary_contact_name,
+  secondaryContactTitle: row.secondary_contact_title,
+  secondaryContactPhone: row.secondary_contact_phone,
+  secondaryContactEmail: row.secondary_contact_email,
 });
 
 const mapContactToDb = (contact: Omit<Contact, 'id' | 'createdAt'>) => ({
@@ -38,7 +46,15 @@ const mapContactToDb = (contact: Omit<Contact, 'id' | 'createdAt'>) => ({
   stage: contact.stage,
   address: contact.address,
   website: contact.website,
+  phone: contact.phone,
+  email: contact.email,
+  title: contact.title,
+  company_type: contact.companyType,
   tier: contact.tier || null,
+  secondary_contact_name: contact.secondaryContactName,
+  secondary_contact_title: contact.secondaryContactTitle,
+  secondary_contact_phone: contact.secondaryContactPhone,
+  secondary_contact_email: contact.secondaryContactEmail,
 });
 
 export const useContacts = () => {
@@ -89,7 +105,16 @@ export const useContacts = () => {
       if (updates.stage !== undefined) dbUpdates.stage = updates.stage;
       if (updates.watched !== undefined) dbUpdates.watched = updates.watched;
       if (updates.website !== undefined) dbUpdates.website = updates.website;
+      if (updates.address !== undefined) dbUpdates.address = updates.address;
+      if (updates.phone !== undefined) dbUpdates.phone = updates.phone;
+      if (updates.email !== undefined) dbUpdates.email = updates.email;
+      if (updates.title !== undefined) dbUpdates.title = updates.title;
+      if (updates.companyType !== undefined) dbUpdates.company_type = updates.companyType;
       if (updates.tier !== undefined) dbUpdates.tier = updates.tier;
+      if (updates.secondaryContactName !== undefined) dbUpdates.secondary_contact_name = updates.secondaryContactName;
+      if (updates.secondaryContactTitle !== undefined) dbUpdates.secondary_contact_title = updates.secondaryContactTitle;
+      if (updates.secondaryContactPhone !== undefined) dbUpdates.secondary_contact_phone = updates.secondaryContactPhone;
+      if (updates.secondaryContactEmail !== undefined) dbUpdates.secondary_contact_email = updates.secondaryContactEmail;
 
       const { error } = await supabase
         .from('contacts')

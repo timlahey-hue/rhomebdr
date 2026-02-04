@@ -83,18 +83,26 @@ export type Database = {
           ai_summary: string | null
           board: string
           company: string
+          company_type: string | null
           created_at: string
+          email: string | null
           id: string
           last_touch_date: string | null
           name: string
           next_touch_date: string | null
+          phone: string | null
           relationship_strength: number
           relationship_type: string
           role: string
+          secondary_contact_email: string | null
+          secondary_contact_name: string | null
+          secondary_contact_phone: string | null
+          secondary_contact_title: string | null
           stage: string
           status_notes: string | null
           tags: string[] | null
           tier: number | null
+          title: string | null
           updated_at: string
           watched: boolean
           website: string | null
@@ -105,18 +113,26 @@ export type Database = {
           ai_summary?: string | null
           board: string
           company: string
+          company_type?: string | null
           created_at?: string
+          email?: string | null
           id?: string
           last_touch_date?: string | null
           name: string
           next_touch_date?: string | null
+          phone?: string | null
           relationship_strength?: number
           relationship_type: string
           role: string
+          secondary_contact_email?: string | null
+          secondary_contact_name?: string | null
+          secondary_contact_phone?: string | null
+          secondary_contact_title?: string | null
           stage: string
           status_notes?: string | null
           tags?: string[] | null
           tier?: number | null
+          title?: string | null
           updated_at?: string
           watched?: boolean
           website?: string | null
@@ -127,18 +143,26 @@ export type Database = {
           ai_summary?: string | null
           board?: string
           company?: string
+          company_type?: string | null
           created_at?: string
+          email?: string | null
           id?: string
           last_touch_date?: string | null
           name?: string
           next_touch_date?: string | null
+          phone?: string | null
           relationship_strength?: number
           relationship_type?: string
           role?: string
+          secondary_contact_email?: string | null
+          secondary_contact_name?: string | null
+          secondary_contact_phone?: string | null
+          secondary_contact_title?: string | null
           stage?: string
           status_notes?: string | null
           tags?: string[] | null
           tier?: number | null
+          title?: string | null
           updated_at?: string
           watched?: boolean
           website?: string | null

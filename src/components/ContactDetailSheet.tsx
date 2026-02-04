@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Contact, ROLE_OPTIONS, RELATIONSHIP_TYPE_OPTIONS, TierLevel } from '@/types/bdr';
+import { Contact, ROLE_OPTIONS, RELATIONSHIP_TYPE_OPTIONS, COMPANY_TYPE_OPTIONS, TierLevel } from '@/types/bdr';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -526,6 +526,140 @@ export const ContactDetailSheet = ({
                 </div>
               )}
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-xs text-muted-foreground">Title</Label>
+                {isEditing ? (
+                  <Input
+                    value={displayData.title || ''}
+                    onChange={(e) => setEditData({ ...editData, title: e.target.value })}
+                    placeholder="e.g., Principal Architect"
+                    className="mt-1"
+                  />
+                ) : (
+                  <p className="text-sm font-medium mt-1">{displayData.title || '—'}</p>
+                )}
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground">Company Type</Label>
+                {isEditing ? (
+                  <Select
+                    value={displayData.companyType || 'none'}
+                    onValueChange={(value) => setEditData({ 
+                      ...editData, 
+                      companyType: value === 'none' ? undefined : value as Contact['companyType'] 
+                    })}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Select type</SelectItem>
+                      {COMPANY_TYPE_OPTIONS.map((type) => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <p className="text-sm font-medium mt-1">{displayData.companyType || '—'}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-xs text-muted-foreground">Phone</Label>
+                {isEditing ? (
+                  <Input
+                    value={displayData.phone || ''}
+                    onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
+                    placeholder="+1 (555) 123-4567"
+                    className="mt-1"
+                  />
+                ) : (
+                  <p className="text-sm font-medium mt-1">{displayData.phone || '—'}</p>
+                )}
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground">Email</Label>
+                {isEditing ? (
+                  <Input
+                    value={displayData.email || ''}
+                    onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                    placeholder="name@company.com"
+                    className="mt-1"
+                  />
+                ) : (
+                  <p className="text-sm font-medium mt-1">{displayData.email ? <a href={`mailto:${displayData.email}`} className="text-accent hover:underline">{displayData.email}</a> : '—'}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Secondary Contact */}
+            {(displayData.secondaryContactName || isEditing) && (
+              <div className="border rounded-lg p-3 bg-muted/30 space-y-3">
+                <h4 className="text-sm font-medium">Secondary Contact</h4>
+                
+                <div>
+                  <Label className="text-xs text-muted-foreground">Name</Label>
+                  {isEditing ? (
+                    <Input
+                      value={displayData.secondaryContactName || ''}
+                      onChange={(e) => setEditData({ ...editData, secondaryContactName: e.target.value })}
+                      placeholder="e.g., Estimator or Project Manager"
+                      className="mt-1"
+                    />
+                  ) : (
+                    <p className="text-sm font-medium mt-1">{displayData.secondaryContactName || '—'}</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Title</Label>
+                    {isEditing ? (
+                      <Input
+                        value={displayData.secondaryContactTitle || ''}
+                        onChange={(e) => setEditData({ ...editData, secondaryContactTitle: e.target.value })}
+                        placeholder="Title"
+                        className="mt-1"
+                      />
+                    ) : (
+                      <p className="text-sm font-medium mt-1">{displayData.secondaryContactTitle || '—'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Phone</Label>
+                    {isEditing ? (
+                      <Input
+                        value={displayData.secondaryContactPhone || ''}
+                        onChange={(e) => setEditData({ ...editData, secondaryContactPhone: e.target.value })}
+                        placeholder="Phone"
+                        className="mt-1"
+                      />
+                    ) : (
+                      <p className="text-sm font-medium mt-1">{displayData.secondaryContactPhone || '—'}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-xs text-muted-foreground">Email</Label>
+                  {isEditing ? (
+                    <Input
+                      type="email"
+                      value={displayData.secondaryContactEmail || ''}
+                      onChange={(e) => setEditData({ ...editData, secondaryContactEmail: e.target.value })}
+                      placeholder="email@company.com"
+                      className="mt-1"
+                    />
+                  ) : (
+                    <p className="text-sm font-medium mt-1">{displayData.secondaryContactEmail ? <a href={`mailto:${displayData.secondaryContactEmail}`} className="text-accent hover:underline">{displayData.secondaryContactEmail}</a> : '—'}</p>
+                  )}
+                </div>
+              </div>
+            )}
 
             <div>
               <Label className="text-xs text-muted-foreground">Notes</Label>
