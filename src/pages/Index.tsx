@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useContacts } from '@/hooks/useContacts';
 import { Contact } from '@/types/bdr';
 import { KanbanBoard } from '@/components/KanbanBoard';
+import { SearchContacts } from '@/components/SearchContacts';
 import { FocusView } from '@/components/FocusView';
 import { ContactDetailSheet } from '@/components/ContactDetailSheet';
 import { AddContactDialog } from '@/components/AddContactDialog';
@@ -51,6 +52,7 @@ const Index = () => {
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [hasSeeded, setHasSeeded] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Keep selectedContact in sync with contacts array
   useEffect(() => {
@@ -128,6 +130,18 @@ const Index = () => {
       title: 'Board cleared', 
       description: `All ${board === 'prospect' ? 'Pipeline' : 'Active'} contacts have been removed.` 
     });
+  };
+
+  // Filter contacts based on search query
+  const filterContacts = (contacts: Contact[]) => {
+    if (!searchQuery.trim()) return contacts;
+    
+    const query = searchQuery.toLowerCase();
+    return contacts.filter((contact) => 
+      contact.company.toLowerCase().includes(query) ||
+      contact.name.toLowerCase().includes(query) ||
+      contact.tags.some(tag => tag.toLowerCase().includes(query))
+    );
   };
 
   if (isLoading) {
@@ -266,9 +280,12 @@ const Index = () => {
                 </AlertDialog>
               </div>
             </div>
+            <div className="mb-4">
+              <SearchContacts value={searchQuery} onChange={setSearchQuery} />
+            </div>
             <KanbanBoard
               boardType="prospect"
-              contacts={getProspectContacts()}
+              contacts={filterContacts(getProspectContacts())}
               onMoveContact={handleMoveContact}
               onCardClick={handleCardClick}
             />
@@ -322,9 +339,12 @@ const Index = () => {
                 </AlertDialog>
               </div>
             </div>
+            <div className="mb-4">
+              <SearchContacts value={searchQuery} onChange={setSearchQuery} />
+            </div>
             <KanbanBoard
               boardType="active"
-              contacts={getActiveContacts()}
+              contacts={filterContacts(getActiveContacts())}
               onMoveContact={handleMoveContact}
               onCardClick={handleCardClick}
             />
