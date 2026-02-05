@@ -98,6 +98,8 @@ export type Database = {
           secondary_contact_name: string | null
           secondary_contact_phone: string | null
           secondary_contact_title: string | null
+          secondary_email: string | null
+          secondary_phone: string | null
           stage: string
           status_notes: string | null
           tags: string[] | null
@@ -128,6 +130,8 @@ export type Database = {
           secondary_contact_name?: string | null
           secondary_contact_phone?: string | null
           secondary_contact_title?: string | null
+          secondary_email?: string | null
+          secondary_phone?: string | null
           stage: string
           status_notes?: string | null
           tags?: string[] | null
@@ -158,6 +162,8 @@ export type Database = {
           secondary_contact_name?: string | null
           secondary_contact_phone?: string | null
           secondary_contact_title?: string | null
+          secondary_email?: string | null
+          secondary_phone?: string | null
           stage?: string
           status_notes?: string | null
           tags?: string[] | null
