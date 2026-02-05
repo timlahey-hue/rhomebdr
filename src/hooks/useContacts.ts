@@ -30,6 +30,8 @@ const mapDbToContact = (row: any): Contact => ({
   secondaryContactTitle: row.secondary_contact_title,
   secondaryContactPhone: row.secondary_contact_phone,
   secondaryContactEmail: row.secondary_contact_email,
+  secondaryPhone: row.secondary_phone,
+  secondaryEmail: row.secondary_email,
 });
 
 const mapContactToDb = (contact: Omit<Contact, 'id' | 'createdAt'>) => ({
@@ -55,6 +57,8 @@ const mapContactToDb = (contact: Omit<Contact, 'id' | 'createdAt'>) => ({
   secondary_contact_title: contact.secondaryContactTitle,
   secondary_contact_phone: contact.secondaryContactPhone,
   secondary_contact_email: contact.secondaryContactEmail,
+  secondary_phone: contact.secondaryPhone,
+  secondary_email: contact.secondaryEmail,
 });
 
 export const useContacts = () => {
@@ -115,6 +119,8 @@ export const useContacts = () => {
       if (updates.secondaryContactTitle !== undefined) dbUpdates.secondary_contact_title = updates.secondaryContactTitle;
       if (updates.secondaryContactPhone !== undefined) dbUpdates.secondary_contact_phone = updates.secondaryContactPhone;
       if (updates.secondaryContactEmail !== undefined) dbUpdates.secondary_contact_email = updates.secondaryContactEmail;
+      if (updates.secondaryPhone !== undefined) dbUpdates.secondary_phone = updates.secondaryPhone;
+      if (updates.secondaryEmail !== undefined) dbUpdates.secondary_email = updates.secondaryEmail;
 
       const { error } = await supabase
         .from('contacts')

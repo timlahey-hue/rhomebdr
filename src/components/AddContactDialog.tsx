@@ -64,6 +64,8 @@ export const AddContactDialog = ({
       secondaryContactTitle: formData.secondaryContactTitle,
       secondaryContactPhone: formData.secondaryContactPhone,
       secondaryContactEmail: formData.secondaryContactEmail,
+      secondaryPhone: formData.secondaryPhone,
+      secondaryEmail: formData.secondaryEmail,
     });
 
     // Reset form
@@ -126,7 +128,7 @@ export const AddContactDialog = ({
                 />
               </div>
               <div>
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phone">Office Phone</Label>
                 <Input
                   id="phone"
                   value={formData.phone || ''}
@@ -137,14 +139,38 @@ export const AddContactDialog = ({
               </div>
             </div>
 
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="secondary-phone">Cell Phone</Label>
+                <Input
+                  id="secondary-phone"
+                  value={formData.secondaryPhone || ''}
+                  onChange={(e) => setFormData({ ...formData, secondaryPhone: e.target.value })}
+                  placeholder="+1 (555) 987-6543"
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="email">Company Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email || ''}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="info@company.com"
+                  className="mt-1"
+                />
+              </div>
+            </div>
+
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="secondary-email">Direct Email</Label>
               <Input
-                id="email"
+                id="secondary-email"
                 type="email"
-                value={formData.email || ''}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="name@company.com"
+                value={formData.secondaryEmail || ''}
+                onChange={(e) => setFormData({ ...formData, secondaryEmail: e.target.value })}
+                placeholder="john@company.com"
                 className="mt-1"
               />
             </div>

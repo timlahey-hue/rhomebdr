@@ -569,7 +569,7 @@ export const ContactDetailSheet = ({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-xs text-muted-foreground">Phone</Label>
+                <Label className="text-xs text-muted-foreground">Office Phone</Label>
                 {isEditing ? (
                   <Input
                     value={displayData.phone || ''}
@@ -582,16 +582,45 @@ export const ContactDetailSheet = ({
                 )}
               </div>
               <div>
-                <Label className="text-xs text-muted-foreground">Email</Label>
+                <Label className="text-xs text-muted-foreground">Cell Phone</Label>
+                {isEditing ? (
+                  <Input
+                    value={displayData.secondaryPhone || ''}
+                    onChange={(e) => setEditData({ ...editData, secondaryPhone: e.target.value })}
+                    placeholder="+1 (555) 987-6543"
+                    className="mt-1"
+                  />
+                ) : (
+                  <p className="text-sm font-medium mt-1">{displayData.secondaryPhone || '—'}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-xs text-muted-foreground">Company Email</Label>
                 {isEditing ? (
                   <Input
                     value={displayData.email || ''}
                     onChange={(e) => setEditData({ ...editData, email: e.target.value })}
-                    placeholder="name@company.com"
+                    placeholder="info@company.com"
                     className="mt-1"
                   />
                 ) : (
                   <p className="text-sm font-medium mt-1">{displayData.email ? <a href={`mailto:${displayData.email}`} className="text-accent hover:underline">{displayData.email}</a> : '—'}</p>
+                )}
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground">Direct Email</Label>
+                {isEditing ? (
+                  <Input
+                    value={displayData.secondaryEmail || ''}
+                    onChange={(e) => setEditData({ ...editData, secondaryEmail: e.target.value })}
+                    placeholder="john@company.com"
+                    className="mt-1"
+                  />
+                ) : (
+                  <p className="text-sm font-medium mt-1">{displayData.secondaryEmail ? <a href={`mailto:${displayData.secondaryEmail}`} className="text-accent hover:underline">{displayData.secondaryEmail}</a> : '—'}</p>
                 )}
               </div>
             </div>

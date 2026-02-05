@@ -51,6 +51,8 @@ export interface Contact {
   secondaryContactTitle?: string;
   secondaryContactPhone?: string;
   secondaryContactEmail?: string;
+  secondaryPhone?: string;
+  secondaryEmail?: string;
 }
 
 export interface Column<T extends string> {
