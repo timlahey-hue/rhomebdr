@@ -12,12 +12,14 @@ import { ActionCard } from './ActionCard';
 import { ScheduleFollowupDialog } from './ScheduleFollowupDialog';
 import { getSuggestedActions } from '@/lib/actions';
 import { Separator } from '@/components/ui/separator';
-import { Calendar, Clock, Building2, X, Trash2, ArrowRight, Globe, Sparkles, Loader2, Eye, EyeOff, Utensils } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Calendar, Clock, Building2, X, Trash2, ArrowRight, Globe, Sparkles, Loader2, Eye, EyeOff, Utensils, MessageSquarePlus, StickyNote } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
 import { useContactResearch } from '@/hooks/useContactResearch';
 import { useContactActivity } from '@/hooks/useContactActivity';
 import { useContactLunchMeetings } from '@/hooks/useBDRGoals';
+import { useContactNotes } from '@/hooks/useContactNotes';
 import { format } from 'date-fns';
 
 interface ContactDetailSheetProps {
@@ -42,10 +44,12 @@ export const ContactDetailSheet = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<Partial<Contact>>({});
   const [newTag, setNewTag] = useState('');
+  const [newNote, setNewNote] = useState('');
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
   const { researchContact, isResearching } = useContactResearch();
   const { logActivity } = useContactActivity();
   const { lunchMeetings } = useContactLunchMeetings(contact?.id);
+  const { notes, addNote, isAdding } = useContactNotes(contact?.id);
 
   if (!contact) return null;
 
@@ -704,19 +708,71 @@ export const ContactDetailSheet = ({
               </div>
             )}
 
+            {/* Notes Log */}
             <div>
-              <Label className="text-xs text-muted-foreground">Notes</Label>
+              <Label className="text-xs text-muted-foreground flex items-center gap-1.5 mb-2">
+                <StickyNote className="h-3.5 w-3.5" />
+                Notes
+              </Label>
+
+              {/* Pinned status note (editable) */}
               {isEditing ? (
                 <Textarea
                   value={displayData.statusNotes || ''}
                   onChange={(e) => setEditData({ ...editData, statusNotes: e.target.value })}
-                  className="mt-1 min-h-[80px]"
-                  placeholder="Add notes about this relationship..."
+                  className="mt-1 min-h-[60px] mb-3"
+                  placeholder="Pinned status note..."
                 />
-              ) : (
-                <p className="text-sm mt-1 text-foreground/80">
-                  {displayData.statusNotes || 'No notes yet.'}
-                </p>
+              ) : displayData.statusNotes ? (
+                <div className="bg-muted/50 border border-border rounded-lg p-2.5 mb-3">
+                  <p className="text-sm text-foreground/80">{displayData.statusNotes}</p>
+                </div>
+              ) : null}
+
+              {/* Add new note */}
+              <div className="flex gap-2 mb-3">
+                <Textarea
+                  value={newNote}
+                  onChange={(e) => setNewNote(e.target.value)}
+                  className="min-h-[60px] text-sm"
+                  placeholder="Add a note..."
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && e.metaKey && newNote.trim()) {
+                      addNote(contact.id, newNote.trim());
+                      setNewNote('');
+                    }
+                  }}
+                />
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="self-end"
+                  disabled={!newNote.trim() || isAdding}
+                  onClick={async () => {
+                    if (!newNote.trim()) return;
+                    await addNote(contact.id, newNote.trim());
+                    setNewNote('');
+                    toast({ title: 'Note added' });
+                  }}
+                >
+                  <MessageSquarePlus className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Notes history */}
+              {notes.length > 0 && (
+                <ScrollArea className="max-h-[200px]">
+                  <div className="space-y-2 pr-3">
+                    {notes.map((n) => (
+                      <div key={n.id} className="border border-border rounded-lg p-2.5">
+                        <p className="text-sm text-foreground/90 whitespace-pre-wrap">{n.note}</p>
+                        <p className="text-[11px] text-muted-foreground mt-1.5">
+                          {format(new Date(n.createdAt), 'MMM d, yyyy · h:mm a')}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
               )}
             </div>
 
