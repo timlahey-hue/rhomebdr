@@ -140,6 +140,13 @@ export const ContactCard = ({ contact, onClick, isDragging }: ContactCardProps) 
         )}
       </div>
 
+      {/* Competitor Notes */}
+      {contact.competitorNotes && (
+        <div className="text-[11px] text-muted-foreground bg-amber-500/10 border border-amber-500/20 rounded p-2 mt-2 mb-2">
+          <span className="font-medium text-amber-700">Competitor Note:</span> {contact.competitorNotes}
+        </div>
+      )}
+
       {/* Dates */}
       <div className="flex items-center justify-between text-[11px] text-muted-foreground">
         <div className="flex items-center gap-1">
