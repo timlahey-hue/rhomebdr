@@ -5,7 +5,6 @@ import { isOverdue, isDueSoon, needsAttention, getSuggestedActions } from '@/lib
 import { ContactCard } from './ContactCard';
 import { ActionCard } from './ActionCard';
 import { WatchList } from './WatchList';
-import { GoalTracker } from './GoalTracker';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -35,9 +34,6 @@ export const FocusView = ({ contacts, onCardClick }: FocusViewProps) => {
 
   return (
     <div className="space-y-6">
-      {/* BDR Goals */}
-      <GoalTracker contacts={contacts} />
-
       {/* Reminders Section */}
       <Card className="border-border/50">
         <CardHeader className="pb-3">
