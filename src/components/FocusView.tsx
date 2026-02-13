@@ -1,13 +1,17 @@
 import { Contact } from '@/types/bdr';
+import { useReminders } from '@/hooks/useReminders';
+import { useRecentNotes } from '@/hooks/useRecentNotes';
 import { isOverdue, isDueSoon, needsAttention, getSuggestedActions } from '@/lib/actions';
 import { ContactCard } from './ContactCard';
 import { ActionCard } from './ActionCard';
 import { WatchList } from './WatchList';
-import { ActivityTimeline } from './ActivityTimeline';
 import { GoalTracker } from './GoalTracker';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, Clock, Star, TrendingUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Bell, AlertCircle, MessageSquare, Trash2, Clock } from 'lucide-react';
+import { format, parseISO, isPast, isToday } from 'date-fns';
 
 interface FocusViewProps {
   contacts: Contact[];
@@ -15,23 +19,12 @@ interface FocusViewProps {
 }
 
 export const FocusView = ({ contacts, onCardClick }: FocusViewProps) => {
-  // Calculate weekly stats
-  const today = new Date();
-  const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-  
-  const touchesThisWeek = contacts.filter(
-    (c) => c.lastTouchDate && new Date(c.lastTouchDate) >= weekAgo
-  ).length;
+  const { reminders, overdueReminders, upcomingReminders, deleteReminder } = useReminders();
+  const { recentNotes } = useRecentNotes(30);
 
   const overdueContacts = contacts.filter(isOverdue);
-  const dueSoonContacts = contacts.filter((c) => isDueSoon(c) && !isOverdue(c));
   const needsAttentionContacts = contacts.filter(needsAttention);
-  
-  const highPotentialContacts = contacts
-    .filter((c) => c.relationshipStrength >= 3 && c.board === 'prospect')
-    .slice(0, 5);
 
-  // Get top priority actions across all contacts
   const topActions = needsAttentionContacts
     .slice(0, 3)
     .map((contact) => ({
@@ -45,76 +38,106 @@ export const FocusView = ({ contacts, onCardClick }: FocusViewProps) => {
       {/* BDR Goals */}
       <GoalTracker contacts={contacts} />
 
-      {/* Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="border-border/50">
-          <CardContent className="pt-4 pb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-accent/10">
-                <TrendingUp className="h-5 w-5 text-accent" />
+      {/* Reminders Section */}
+      <Card className="border-border/50">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-medium flex items-center gap-2">
+            <Bell className="h-4 w-4 text-accent" />
+            Reminders
+            {(overdueReminders.length + upcomingReminders.length) > 0 && (
+              <Badge variant="secondary" className="text-xs font-normal">
+                {overdueReminders.length + upcomingReminders.length}
+              </Badge>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ScrollArea className="max-h-[350px]">
+            {overdueReminders.length === 0 && upcomingReminders.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-4 text-center">
+                No reminders set. Use the Reminder button on a contact card to add one.
+              </p>
+            ) : (
+              <div className="space-y-2 pr-3">
+                {overdueReminders.map((r) => (
+                  <div
+                    key={r.id}
+                    className="flex items-start gap-3 p-3 rounded-lg bg-destructive/5 border border-destructive/20 cursor-pointer"
+                    onClick={() => {
+                      const contact = contacts.find(c => c.id === r.contactId);
+                      if (contact) onCardClick(contact);
+                    }}
+                  >
+                    <div className="p-1.5 rounded bg-destructive/10 mt-0.5">
+                      <AlertCircle className="h-3.5 w-3.5 text-destructive" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm text-foreground">{r.contactName}</span>
+                        <span className="text-xs text-muted-foreground">• {r.contactCompany}</span>
+                      </div>
+                      {r.notes && <p className="text-xs text-muted-foreground mt-0.5">{r.notes}</p>}
+                      <p className="text-xs text-destructive mt-1 font-medium">
+                        Overdue — {format(parseISO(r.reminderDate), 'MMM d, yyyy')}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 shrink-0"
+                      onClick={(e) => { e.stopPropagation(); deleteReminder(r.id); }}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
+                {upcomingReminders.map((r) => (
+                  <div
+                    key={r.id}
+                    className="flex items-start gap-3 p-3 rounded-lg bg-secondary/30 border border-border/30 cursor-pointer"
+                    onClick={() => {
+                      const contact = contacts.find(c => c.id === r.contactId);
+                      if (contact) onCardClick(contact);
+                    }}
+                  >
+                    <div className="p-1.5 rounded bg-accent/10 mt-0.5">
+                      <Bell className="h-3.5 w-3.5 text-accent" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm text-foreground">{r.contactName}</span>
+                        <span className="text-xs text-muted-foreground">• {r.contactCompany}</span>
+                      </div>
+                      {r.notes && <p className="text-xs text-muted-foreground mt-0.5">{r.notes}</p>}
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {isToday(parseISO(r.reminderDate)) ? 'Today' : format(parseISO(r.reminderDate), 'MMM d, yyyy')}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 shrink-0"
+                      onClick={(e) => { e.stopPropagation(); deleteReminder(r.id); }}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
               </div>
-              <div>
-                <p className="text-2xl font-semibold text-foreground">{touchesThisWeek}</p>
-                <p className="text-xs text-muted-foreground">Touches this week</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            )}
+          </ScrollArea>
+        </CardContent>
+      </Card>
 
-        <Card className="border-border/50">
-          <CardContent className="pt-4 pb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-destructive/10">
-                <AlertCircle className="h-5 w-5 text-destructive" />
-              </div>
-              <div>
-                <p className="text-2xl font-semibold text-foreground">{overdueContacts.length}</p>
-                <p className="text-xs text-muted-foreground">Overdue</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50">
-          <CardContent className="pt-4 pb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-highlight/10">
-                <Clock className="h-5 w-5 text-highlight" />
-              </div>
-              <div>
-                <p className="text-2xl font-semibold text-foreground">{dueSoonContacts.length}</p>
-                <p className="text-xs text-muted-foreground">Due this week</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50">
-          <CardContent className="pt-4 pb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-accent/10">
-                <Star className="h-5 w-5 text-accent" />
-              </div>
-              <div>
-                <p className="text-2xl font-semibold text-foreground">{highPotentialContacts.length}</p>
-                <p className="text-xs text-muted-foreground">High potential</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Watch List - Front and Center */}
+      {/* Watch List */}
       <WatchList contacts={contacts} onCardClick={onCardClick} />
 
-      {/* Main Grid */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Priority Actions */}
         <Card className="border-border/50">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-medium flex items-center gap-2">
               Top Priority Actions
-              <Badge variant="secondary" className="text-xs font-normal">This Week</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -164,64 +187,56 @@ export const FocusView = ({ contacts, onCardClick }: FocusViewProps) => {
             )}
           </CardContent>
         </Card>
-
-        {/* Due This Week */}
-        <Card className="border-border/50">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-medium flex items-center gap-2">
-              Due This Week
-              {dueSoonContacts.length > 0 && (
-                <Badge className="text-xs font-normal bg-highlight/20 text-highlight border-0">
-                  {dueSoonContacts.length}
-                </Badge>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {dueSoonContacts.length > 0 ? (
-              dueSoonContacts.slice(0, 4).map((contact) => (
-                <ContactCard
-                  key={contact.id}
-                  contact={contact}
-                  onClick={() => onCardClick(contact)}
-                />
-              ))
-            ) : (
-              <p className="text-sm text-muted-foreground py-4 text-center">
-                Nothing urgent this week. Time to prospect!
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* High Potential Prospects */}
-        <Card className="border-border/50">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-medium flex items-center gap-2">
-              High Potential Prospects
-              <Badge variant="secondary" className="text-xs font-normal">Strength 3+</Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {highPotentialContacts.length > 0 ? (
-              highPotentialContacts.slice(0, 4).map((contact) => (
-                <ContactCard
-                  key={contact.id}
-                  contact={contact}
-                  onClick={() => onCardClick(contact)}
-                />
-              ))
-            ) : (
-              <p className="text-sm text-muted-foreground py-4 text-center">
-                Keep building those relationships to see high-potential prospects here.
-              </p>
-            )}
-          </CardContent>
-        </Card>
       </div>
 
-      {/* Activity Timeline / Reporting */}
-      <ActivityTimeline maxItems={30} />
+      {/* Recent Notes Activity Feed */}
+      <Card className="border-border/50">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-medium flex items-center gap-2">
+            <MessageSquare className="h-4 w-4 text-accent" />
+            Recent Notes Activity
+            <Badge variant="secondary" className="text-xs font-normal">
+              {recentNotes.length} notes
+            </Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ScrollArea className="h-[400px] pr-4">
+            {recentNotes.length > 0 ? (
+              <div className="space-y-2">
+                {recentNotes.map((note) => (
+                  <div
+                    key={note.id}
+                    className="flex items-start gap-3 p-3 rounded-lg bg-secondary/30 border border-border/30 cursor-pointer"
+                    onClick={() => {
+                      const contact = contacts.find(c => c.id === note.contactId);
+                      if (contact) onCardClick(contact);
+                    }}
+                  >
+                    <div className="p-1.5 rounded bg-accent/10 text-accent mt-0.5">
+                      <MessageSquare className="h-3.5 w-3.5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm text-foreground">{note.contactName}</span>
+                        <span className="text-xs text-muted-foreground">• {note.contactCompany}</span>
+                      </div>
+                      <p className="text-sm text-foreground/80 mt-1 line-clamp-2">{note.note}</p>
+                      <p className="text-xs text-muted-foreground mt-1.5">
+                        {format(parseISO(note.createdAt), 'MMM d, yyyy · h:mm a')}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground py-8 text-center">
+                No notes yet. Add notes on contact cards to see activity here.
+              </p>
+            )}
+          </ScrollArea>
+        </CardContent>
+      </Card>
     </div>
   );
 };

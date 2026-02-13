@@ -65,6 +65,7 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
         column: {
+          competitor: "hsl(var(--column-competitor))",
           research: "hsl(var(--column-research))",
           identified: "hsl(var(--column-identified))",
           contact: "hsl(var(--column-contact))",

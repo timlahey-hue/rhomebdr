@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Contact, ROLE_OPTIONS, RELATIONSHIP_TYPE_OPTIONS, COMPANY_TYPE_OPTIONS, TierLevel } from '@/types/bdr';
+import { useState, useEffect } from 'react';
+import { Contact, ROLE_OPTIONS, RELATIONSHIP_TYPE_OPTIONS, COMPANY_TYPE_OPTIONS, TITLE_OPTIONS, TierLevel } from '@/types/bdr';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,14 +13,15 @@ import { ScheduleFollowupDialog } from './ScheduleFollowupDialog';
 import { getSuggestedActions } from '@/lib/actions';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Calendar, Clock, Building2, X, Trash2, ArrowRight, Globe, Sparkles, Loader2, Eye, EyeOff, Utensils, MessageSquarePlus, StickyNote } from 'lucide-react';
+import { Calendar, Clock, Building2, X, Trash2, ArrowRight, Globe, Sparkles, Loader2, Eye, EyeOff, Utensils, MessageSquarePlus, StickyNote, Bell } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
 import { useContactResearch } from '@/hooks/useContactResearch';
 import { useContactActivity } from '@/hooks/useContactActivity';
 import { useContactLunchMeetings } from '@/hooks/useBDRGoals';
 import { useContactNotes } from '@/hooks/useContactNotes';
-import { format } from 'date-fns';
+import { useReminders } from '@/hooks/useReminders';
+import { format, addWeeks, addMonths } from 'date-fns';
 
 interface ContactDetailSheetProps {
   contact: Contact | null;
@@ -31,6 +32,15 @@ interface ContactDetailSheetProps {
   onMoveToActive?: (contact: Contact) => void;
   onRefresh?: () => void;
 }
+
+const REMINDER_OPTIONS = [
+  { label: 'This week', days: 7 },
+  { label: 'Two weeks', days: 14 },
+  { label: 'Three weeks', days: 21 },
+  { label: 'One month', days: 30 },
+  { label: 'Three months', days: 90 },
+  { label: 'Six months', days: 180 },
+] as const;
 
 export const ContactDetailSheet = ({
   contact,
@@ -46,10 +56,21 @@ export const ContactDetailSheet = ({
   const [newTag, setNewTag] = useState('');
   const [newNote, setNewNote] = useState('');
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
+  const [showReminderMenu, setShowReminderMenu] = useState(false);
   const { researchContact, isResearching } = useContactResearch();
   const { logActivity } = useContactActivity();
   const { lunchMeetings } = useContactLunchMeetings(contact?.id);
   const { notes, addNote, isAdding } = useContactNotes(contact?.id);
+  const { addReminder, isAdding: isAddingReminder } = useReminders();
+
+  // Reset local state when contact changes to prevent data leakage
+  useEffect(() => {
+    setNewNote('');
+    setNewTag('');
+    setIsEditing(false);
+    setEditData({});
+    setShowReminderMenu(false);
+  }, [contact?.id]);
 
   if (!contact) return null;
 
@@ -64,13 +85,11 @@ export const ContactDetailSheet = ({
   };
 
   const handleSave = () => {
-    // Check if relationship type changed from Target to Active Partner
     if (
       editData.relationshipType === 'Active Partner' && 
       contact.relationshipType === 'Target' && 
       contact.board === 'prospect'
     ) {
-      // Move to active board
       onUpdate(contact.id, { 
         ...editData, 
         board: 'active', 
@@ -85,11 +104,10 @@ export const ContactDetailSheet = ({
       contact.relationshipType !== 'Target' && 
       contact.board === 'active'
     ) {
-      // Move back to prospect board
       onUpdate(contact.id, { 
         ...editData, 
         board: 'prospect', 
-        stage: 'warm-relationship' 
+        stage: 'hot-stove' 
       });
       toast({ 
         title: 'Moved to Pipeline', 
@@ -164,6 +182,31 @@ export const ContactDetailSheet = ({
         description: `${contact.name} is now an active partner.` 
       });
     }
+  };
+
+  const handleSetReminder = async (days: number, label: string) => {
+    const today = new Date();
+    let reminderDate: Date;
+    if (days <= 21) {
+      reminderDate = addWeeks(today, days / 7);
+    } else if (days === 30) {
+      reminderDate = addMonths(today, 1);
+    } else if (days === 90) {
+      reminderDate = addMonths(today, 3);
+    } else {
+      reminderDate = addMonths(today, 6);
+    }
+    
+    await addReminder({
+      contactId: contact.id,
+      reminderDate: format(reminderDate, 'yyyy-MM-dd'),
+      notes: `Follow up with ${contact.name} (${label})`,
+    });
+    setShowReminderMenu(false);
+    toast({ 
+      title: 'Reminder set', 
+      description: `Reminder for ${contact.name} on ${format(reminderDate, 'MMM d, yyyy')}` 
+    });
   };
 
   return (
@@ -260,6 +303,27 @@ export const ContactDetailSheet = ({
               <Calendar className="h-4 w-4 mr-1.5" />
               Schedule
             </Button>
+            {/* Reminder Button */}
+            <div className="relative">
+              <Button size="sm" variant="outline" onClick={() => setShowReminderMenu(!showReminderMenu)}>
+                <Bell className="h-4 w-4 mr-1.5" />
+                Reminder
+              </Button>
+              {showReminderMenu && (
+                <div className="absolute top-full left-0 mt-1 z-50 bg-popover border border-border rounded-lg shadow-lg p-1 min-w-[160px]">
+                  {REMINDER_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.days}
+                      onClick={() => handleSetReminder(opt.days, opt.label)}
+                      disabled={isAddingReminder}
+                      className="w-full text-left text-sm px-3 py-1.5 rounded hover:bg-accent/10 text-foreground"
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             {contact.board === 'prospect' && contact.stage === 'ready-for-referral' && (
               <Button size="sm" variant="default" onClick={handleMoveToActive} className="bg-accent text-accent-foreground hover:bg-accent/90">
                 <ArrowRight className="h-4 w-4 mr-1.5" />
@@ -535,12 +599,23 @@ export const ContactDetailSheet = ({
               <div>
                 <Label className="text-xs text-muted-foreground">Title</Label>
                 {isEditing ? (
-                  <Input
-                    value={displayData.title || ''}
-                    onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-                    placeholder="e.g., Principal Architect"
-                    className="mt-1"
-                  />
+                  <Select
+                    value={displayData.title || 'none'}
+                    onValueChange={(value) => setEditData({ 
+                      ...editData, 
+                      title: value === 'none' ? undefined : value 
+                    })}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select title" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Select title</SelectItem>
+                      {TITLE_OPTIONS.map((t) => (
+                        <SelectItem key={t} value={t}>{t}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 ) : (
                   <p className="text-sm font-medium mt-1">{displayData.title || '—'}</p>
                 )}
@@ -642,6 +717,23 @@ export const ContactDetailSheet = ({
                 <p className="text-sm font-medium mt-1">{displayData.address || '—'}</p>
               )}
             </div>
+
+            {/* Competitor Notes - visible on identified-competitor stage */}
+            {(contact.stage === 'identified-competitor' || isEditing) && (
+              <div>
+                <Label className="text-xs text-muted-foreground">Competitor Notes</Label>
+                {isEditing ? (
+                  <Textarea
+                    value={displayData.competitorNotes || ''}
+                    onChange={(e) => setEditData({ ...editData, competitorNotes: e.target.value })}
+                    className="mt-1 min-h-[60px]"
+                    placeholder="Who is the competitor? What do we know about them?"
+                  />
+                ) : (
+                  <p className="text-sm font-medium mt-1">{displayData.competitorNotes || '—'}</p>
+                )}
+              </div>
+            )}
 
             {/* Secondary Contact */}
             {(displayData.secondaryContactName || isEditing) && (

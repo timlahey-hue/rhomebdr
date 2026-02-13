@@ -13,7 +13,7 @@ export const mockContacts: Contact[] = [
     relationshipStrength: 3,
     tags: ['Luxury Residential', 'North Shore', 'High Potential'],
     board: 'prospect',
-    stage: 'warm-relationship',
+    stage: 'hot-stove',
     createdAt: '2024-11-15',
   },
   {

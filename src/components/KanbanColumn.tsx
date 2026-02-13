@@ -15,7 +15,7 @@ export function KanbanColumn<T extends string>({
   onCardClick,
 }: KanbanColumnProps<T>) {
   return (
-    <div className="flex-shrink-0 w-72">
+    <div className="flex-shrink-0 w-60">
       <div className={cn('rounded-xl p-3', column.color)}>
         {/* Column header */}
         <div className="flex items-center justify-between mb-3 px-1">

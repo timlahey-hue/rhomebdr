@@ -5,7 +5,7 @@ import { KanbanColumn } from './KanbanColumn';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowUpDown } from 'lucide-react';
 
-type SortOption = 'none' | 'first-name' | 'last-name' | 'company';
+type SortOption = 'none' | 'first-name' | 'last-name' | 'company' | 'most-recent';
 
 interface KanbanBoardProps {
   boardType: 'prospect' | 'active';
@@ -33,6 +33,11 @@ export const KanbanBoard = ({
   const sortContacts = (list: Contact[]) => {
     if (sortBy === 'none') return list;
     return [...list].sort((a, b) => {
+      if (sortBy === 'most-recent') {
+        const aDate = a.lastTouchDate ? new Date(a.lastTouchDate).getTime() : 0;
+        const bDate = b.lastTouchDate ? new Date(b.lastTouchDate).getTime() : 0;
+        return bDate - aDate;
+      }
       if (sortBy === 'first-name') {
         return a.name.split(' ')[0].localeCompare(b.name.split(' ')[0]);
       }
@@ -59,6 +64,7 @@ export const KanbanBoard = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="none">Default Order</SelectItem>
+            <SelectItem value="most-recent">Most Recent</SelectItem>
             <SelectItem value="first-name">First Name</SelectItem>
             <SelectItem value="last-name">Last Name</SelectItem>
             <SelectItem value="company">Company Name</SelectItem>
@@ -66,7 +72,7 @@ export const KanbanBoard = ({
         </Select>
       </div>
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin">
+        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-thin">
           {columns.map((column) => (
             <KanbanColumn
               key={column.id}
