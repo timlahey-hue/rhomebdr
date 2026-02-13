@@ -72,14 +72,15 @@ export const KanbanBoard = ({
         </Select>
       </div>
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-thin">
+        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-thin flex-col-reverse-scroll" style={{ transform: 'rotateX(180deg)' }}>
           {columns.map((column) => (
-            <KanbanColumn
-              key={column.id}
-              column={column}
-              contacts={getContactsForColumn(column.id)}
-              onCardClick={onCardClick}
-            />
+            <div key={column.id} style={{ transform: 'rotateX(180deg)' }}>
+              <KanbanColumn
+                column={column}
+                contacts={getContactsForColumn(column.id)}
+                onCardClick={onCardClick}
+              />
+            </div>
           ))}
         </div>
       </DragDropContext>
