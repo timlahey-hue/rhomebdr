@@ -105,6 +105,38 @@ export type Database = {
           },
         ]
       }
+      contact_reminders: {
+        Row: {
+          contact_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          reminder_date: string
+        }
+        Insert: {
+          contact_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          reminder_date: string
+        }
+        Update: {
+          contact_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          reminder_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_reminders_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contacts: {
         Row: {
           address: string | null
@@ -113,6 +145,7 @@ export type Database = {
           board: string
           company: string
           company_type: string | null
+          competitor_notes: string | null
           created_at: string
           email: string | null
           id: string
@@ -145,6 +178,7 @@ export type Database = {
           board: string
           company: string
           company_type?: string | null
+          competitor_notes?: string | null
           created_at?: string
           email?: string | null
           id?: string
@@ -177,6 +211,7 @@ export type Database = {
           board?: string
           company?: string
           company_type?: string | null
+          competitor_notes?: string | null
           created_at?: string
           email?: string | null
           id?: string

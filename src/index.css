@@ -48,6 +48,7 @@
     --radius: 0.625rem;
 
     /* Column colors - subtle, harmonious */
+    --column-competitor: 280 20% 93%;
     --column-research: 220 15% 94%;
     --column-identified: 200 20% 92%;
     --column-contact: 180 15% 91%;
@@ -142,6 +143,7 @@
     --ring: 150 30% 50%;
 
     /* Column colors - dark mode */
+    --column-competitor: 280 15% 15%;
     --column-research: 220 15% 14%;
     --column-identified: 200 18% 15%;
     --column-contact: 180 15% 14%;

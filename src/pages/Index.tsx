@@ -174,7 +174,7 @@ const Index = () => {
               <TabsList className="bg-secondary/50">
                 <TabsTrigger value="focus" className="gap-1.5">
                   <LayoutGrid className="h-4 w-4" />
-                  <span className="hidden sm:inline">This Week</span>
+                  <span className="hidden sm:inline">Dashboard</span>
                 </TabsTrigger>
                 <TabsTrigger value="pipeline" className="gap-1.5">
                   <Target className="h-4 w-4" />
@@ -224,9 +224,9 @@ const Index = () => {
         {currentView === 'focus' && (
           <div className="animate-fade-in">
             <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-foreground">This Week's Focus</h2>
+              <h2 className="text-2xl font-semibold text-foreground">Dashboard</h2>
               <p className="text-muted-foreground text-sm mt-1">
-                Your priority relationships and actions to keep momentum
+                Your reminders, priorities, and recent activity
               </p>
             </div>
             <FocusView contacts={contacts} onCardClick={handleCardClick} />

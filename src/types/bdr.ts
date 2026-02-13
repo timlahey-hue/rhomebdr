@@ -4,12 +4,15 @@ export type RelationshipType = 'Target' | 'Active Partner' | 'Influencer';
 
 export type CompanyType = 'Design Build' | 'Architecture Firm' | 'Contractor' | 'Other';
 
+export type TitleType = 'Owner' | 'CEO' | 'Partner' | 'Purchaser' | 'Estimator' | 'Office Manager' | 'Associate' | 'Vice President';
+
 export type ProspectStage = 
+  | 'identified-competitor'
   | 'researching'
   | 'identified'
   | 'first-contact'
   | 'active-conversation'
-  | 'warm-relationship'
+  | 'hot-stove'
   | 'ready-for-referral'
   | 'dormant';
 
@@ -53,6 +56,7 @@ export interface Contact {
   secondaryContactEmail?: string;
   secondaryPhone?: string;
   secondaryEmail?: string;
+  competitorNotes?: string;
 }
 
 export interface Column<T extends string> {
@@ -62,11 +66,12 @@ export interface Column<T extends string> {
 }
 
 export const PROSPECT_COLUMNS: Column<ProspectStage>[] = [
+  { id: 'identified-competitor', title: 'Identified Competitor', color: 'bg-column-competitor' },
   { id: 'researching', title: 'Researching', color: 'bg-column-research' },
   { id: 'identified', title: 'Identified', color: 'bg-column-identified' },
   { id: 'first-contact', title: 'First Contact', color: 'bg-column-contact' },
   { id: 'active-conversation', title: 'Active Conversation', color: 'bg-column-active' },
-  { id: 'warm-relationship', title: 'Warm Relationship', color: 'bg-column-warm' },
+  { id: 'hot-stove', title: 'Hot Stove', color: 'bg-column-warm' },
   { id: 'ready-for-referral', title: 'Ready for Referral', color: 'bg-column-ready' },
   { id: 'dormant', title: 'Dormant', color: 'bg-column-dormant' },
 ];
@@ -87,6 +92,17 @@ export const ROLE_OPTIONS: RoleType[] = [
   'Landscape Designer',
   'Real Estate Advisor',
   'Other',
+];
+
+export const TITLE_OPTIONS: TitleType[] = [
+  'Owner',
+  'CEO',
+  'Partner',
+  'Purchaser',
+  'Estimator',
+  'Office Manager',
+  'Associate',
+  'Vice President',
 ];
 
 export const RELATIONSHIP_TYPE_OPTIONS: RelationshipType[] = [

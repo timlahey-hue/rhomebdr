@@ -59,7 +59,8 @@ export const getProspectActions = (contact: Contact): SuggestedAction[] => {
         { icon: '📅', title: 'Schedule next touch', description: 'Book a follow-up before this conversation ends', priority: 'medium' }
       );
       break;
-    case 'warm-relationship':
+    case 'hot-stove':
+    case 'identified-competitor':
       if (daysSinceTouch > 14) {
         actions.push({ icon: '⏰', title: 'Reconnect soon', description: `It's been ${daysSinceTouch} days—time for a touchpoint`, priority: 'high' });
       }
