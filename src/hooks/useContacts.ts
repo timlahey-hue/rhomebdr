@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Contact } from '@/types/bdr';
+import { useOrganization } from '@/contexts/OrganizationContext';
 
 const mapDbToContact = (row: any): Contact => ({
   id: row.id,
@@ -65,25 +66,28 @@ const mapContactToDb = (contact: Omit<Contact, 'id' | 'createdAt'>) => ({
 
 export const useContacts = () => {
   const queryClient = useQueryClient();
+  const { currentOrg } = useOrganization();
 
   const { data: contacts = [], isLoading, refetch } = useQuery({
-    queryKey: ['contacts'],
+    queryKey: ['contacts', currentOrg],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('contacts')
         .select('*')
+        .eq('organization', currentOrg!)
         .order('created_at', { ascending: false });
       
       if (error) throw error;
       return data.map(mapDbToContact);
     },
+    enabled: !!currentOrg,
   });
 
   const addMutation = useMutation({
     mutationFn: async (contact: Omit<Contact, 'id' | 'createdAt'>) => {
       const { data, error } = await supabase
         .from('contacts')
-        .insert(mapContactToDb(contact))
+        .insert({ ...mapContactToDb(contact), organization: currentOrg! })
         .select()
         .single();
       
@@ -91,7 +95,7 @@ export const useContacts = () => {
       return mapDbToContact(data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contacts'] });
+      queryClient.invalidateQueries({ queryKey: ['contacts', currentOrg] });
     },
   });
 
@@ -133,7 +137,7 @@ export const useContacts = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contacts'] });
+      queryClient.invalidateQueries({ queryKey: ['contacts', currentOrg] });
     },
   });
 
@@ -147,7 +151,7 @@ export const useContacts = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contacts'] });
+      queryClient.invalidateQueries({ queryKey: ['contacts', currentOrg] });
     },
   });
 
@@ -156,10 +160,10 @@ export const useContacts = () => {
   };
 
   const importContacts = async (contacts: Omit<Contact, 'id' | 'createdAt'>[]) => {
-    const dbContacts = contacts.map(mapContactToDb);
+    const dbContacts = contacts.map(c => ({ ...mapContactToDb(c), organization: currentOrg! }));
     const { error } = await supabase.from('contacts').insert(dbContacts);
     if (error) throw error;
-    queryClient.invalidateQueries({ queryKey: ['contacts'] });
+    queryClient.invalidateQueries({ queryKey: ['contacts', currentOrg] });
   };
 
   const updateContact = (id: string, updates: Partial<Contact>) => {
@@ -212,10 +216,11 @@ export const useContacts = () => {
     const { error } = await supabase
       .from('contacts')
       .delete()
-      .eq('board', board);
+      .eq('board', board)
+      .eq('organization', currentOrg!);
     
     if (error) throw error;
-    queryClient.invalidateQueries({ queryKey: ['contacts'] });
+    queryClient.invalidateQueries({ queryKey: ['contacts', currentOrg] });
   };
 
   return {

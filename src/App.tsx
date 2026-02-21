@@ -4,11 +4,29 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
+import { OrganizationProvider, useOrganization } from "@/contexts/OrganizationContext";
 import Index from "./pages/Index";
 import CalendarCallback from "./pages/CalendarCallback";
+import CompanySelector from "./pages/CompanySelector";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+const AppRoutes = () => {
+  const { currentOrg } = useOrganization();
+
+  if (!currentOrg) {
+    return <CompanySelector />;
+  }
+
+  return (
+    <Routes>
+      <Route path="/" element={<Index />} />
+      <Route path="/calendar-callback" element={<CalendarCallback />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -16,14 +34,11 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/calendar-callback" element={<CalendarCallback />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <OrganizationProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </OrganizationProvider>
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
