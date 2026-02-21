@@ -21,6 +21,7 @@ export type Database = {
           id: string
           log_date: string
           notes: string | null
+          organization: string
         }
         Insert: {
           created_at?: string
@@ -28,6 +29,7 @@ export type Database = {
           id?: string
           log_date?: string
           notes?: string | null
+          organization?: string
         }
         Update: {
           created_at?: string
@@ -35,6 +37,7 @@ export type Database = {
           id?: string
           log_date?: string
           notes?: string | null
+          organization?: string
         }
         Relationships: []
       }
@@ -152,6 +155,7 @@ export type Database = {
           last_touch_date: string | null
           name: string
           next_touch_date: string | null
+          organization: string
           phone: string | null
           relationship_strength: number
           relationship_type: string
@@ -185,6 +189,7 @@ export type Database = {
           last_touch_date?: string | null
           name: string
           next_touch_date?: string | null
+          organization?: string
           phone?: string | null
           relationship_strength?: number
           relationship_type: string
@@ -218,6 +223,7 @@ export type Database = {
           last_touch_date?: string | null
           name?: string
           next_touch_date?: string | null
+          organization?: string
           phone?: string | null
           relationship_strength?: number
           relationship_type?: string
@@ -309,18 +315,21 @@ export type Database = {
       voice_profile: {
         Row: {
           id: string
+          organization: string
           sample_emails: string[] | null
           tone_description: string | null
           updated_at: string
         }
         Insert: {
           id?: string
+          organization?: string
           sample_emails?: string[] | null
           tone_description?: string | null
           updated_at?: string
         }
         Update: {
           id?: string
+          organization?: string
           sample_emails?: string[] | null
           tone_description?: string | null
           updated_at?: string
