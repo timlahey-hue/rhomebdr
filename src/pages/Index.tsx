@@ -11,8 +11,9 @@ import { VoiceSettingsDialog } from '@/components/VoiceSettingsDialog';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Target, Users, LayoutGrid, Home, Sparkles, Upload, Trash2, Download } from 'lucide-react';
+import { Plus, Target, Users, LayoutGrid, Home, Sparkles, Upload, Trash2, Download, Radio, ArrowLeftRight } from 'lucide-react';
 import { exportContactsToCSV } from '@/lib/exportContacts';
+import { useOrganization } from '@/contexts/OrganizationContext';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,6 +45,8 @@ const Index = () => {
     getActiveContacts,
     clearBoard,
   } = useContacts();
+
+  const { currentOrg, clearOrg, orgDetails } = useOrganization();
 
   const [currentView, setCurrentView] = useState<ViewType>('focus');
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
@@ -160,13 +163,26 @@ const Index = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary">
-                <Home className="h-5 w-5 text-primary-foreground" />
+              <div className={`flex items-center justify-center w-9 h-9 rounded-lg ${currentOrg === 'sync-systems' ? 'bg-blue-600' : 'bg-primary'}`}>
+                {currentOrg === 'sync-systems' ? (
+                  <Radio className="h-5 w-5 text-white" />
+                ) : (
+                  <Home className="h-5 w-5 text-primary-foreground" />
+                )}
               </div>
               <div>
-                <h1 className="text-lg font-semibold text-foreground tracking-tight">r:home</h1>
+                <h1 className="text-lg font-semibold text-foreground tracking-tight">{orgDetails?.name}</h1>
                 <p className="text-[11px] text-muted-foreground -mt-0.5">Relationship Builder</p>
               </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={clearOrg}
+                className="text-muted-foreground hover:text-foreground ml-1"
+                title="Switch Company"
+              >
+                <ArrowLeftRight className="h-4 w-4" />
+              </Button>
             </div>
 
             {/* Navigation Tabs */}
