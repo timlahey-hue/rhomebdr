@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useOrganization } from '@/contexts/OrganizationContext';
 
 export interface Reminder {
   id: string;
@@ -13,26 +14,30 @@ export interface Reminder {
 
 export const useReminders = () => {
   const queryClient = useQueryClient();
+  const { currentOrg } = useOrganization();
 
   const { data: reminders = [], isLoading } = useQuery({
-    queryKey: ['reminders'],
+    queryKey: ['reminders', currentOrg],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('contact_reminders')
-        .select('*, contacts(name, company)')
+        .select('*, contacts(name, company, organization)')
         .order('reminder_date', { ascending: true });
 
       if (error) throw error;
-      return data.map((row: any): Reminder => ({
-        id: row.id,
-        contactId: row.contact_id,
-        contactName: row.contacts?.name || 'Unknown',
-        contactCompany: row.contacts?.company || '',
-        reminderDate: row.reminder_date,
-        notes: row.notes,
-        createdAt: row.created_at,
-      }));
+      return data
+        .filter((row: any) => row.contacts?.organization === currentOrg)
+        .map((row: any): Reminder => ({
+          id: row.id,
+          contactId: row.contact_id,
+          contactName: row.contacts?.name || 'Unknown',
+          contactCompany: row.contacts?.company || '',
+          reminderDate: row.reminder_date,
+          notes: row.notes,
+          createdAt: row.created_at,
+        }));
     },
+    enabled: !!currentOrg,
   });
 
   const addReminderMutation = useMutation({
