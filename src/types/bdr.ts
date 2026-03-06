@@ -56,6 +56,10 @@ export interface Contact {
   secondaryContactEmail?: string;
   secondaryPhone?: string;
   secondaryEmail?: string;
+  tertiaryContactName?: string;
+  tertiaryContactTitle?: string;
+  tertiaryContactPhone?: string;
+  tertiaryContactEmail?: string;
   competitorNotes?: string;
 }
 
@@ -66,7 +70,6 @@ export interface Column<T extends string> {
 }
 
 export const PROSPECT_COLUMNS: Column<ProspectStage>[] = [
-  { id: 'identified-competitor', title: 'Identified Competitor', color: 'bg-column-competitor' },
   { id: 'researching', title: 'Researching', color: 'bg-column-research' },
   { id: 'identified', title: 'Identified', color: 'bg-column-identified' },
   { id: 'first-contact', title: 'First Contact', color: 'bg-column-contact' },
@@ -74,6 +77,7 @@ export const PROSPECT_COLUMNS: Column<ProspectStage>[] = [
   { id: 'hot-stove', title: 'Hot Stove', color: 'bg-column-warm' },
   { id: 'ready-for-referral', title: 'Ready for Referral', color: 'bg-column-ready' },
   { id: 'dormant', title: 'Dormant', color: 'bg-column-dormant' },
+  { id: 'identified-competitor', title: 'Identified Competitor', color: 'bg-column-competitor' },
 ];
 
 export const ACTIVE_COLUMNS: Column<ActiveStage>[] = [

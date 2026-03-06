@@ -800,6 +800,71 @@ export const ContactDetailSheet = ({
               </div>
             )}
 
+            {/* Tertiary Contact */}
+            {(displayData.tertiaryContactName || isEditing) && (
+              <div className="border rounded-lg p-3 bg-muted/30 space-y-3">
+                <h4 className="text-sm font-medium">Third Contact</h4>
+
+                <div>
+                  <Label className="text-xs text-muted-foreground">Name</Label>
+                  {isEditing ? (
+                    <Input
+                      value={displayData.tertiaryContactName || ''}
+                      onChange={(e) => setEditData({ ...editData, tertiaryContactName: e.target.value })}
+                      placeholder="Contact name"
+                      className="mt-1"
+                    />
+                  ) : (
+                    <p className="text-sm font-medium mt-1">{displayData.tertiaryContactName || '—'}</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Title</Label>
+                    {isEditing ? (
+                      <Input
+                        value={displayData.tertiaryContactTitle || ''}
+                        onChange={(e) => setEditData({ ...editData, tertiaryContactTitle: e.target.value })}
+                        placeholder="Title"
+                        className="mt-1"
+                      />
+                    ) : (
+                      <p className="text-sm font-medium mt-1">{displayData.tertiaryContactTitle || '—'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Phone</Label>
+                    {isEditing ? (
+                      <Input
+                        value={displayData.tertiaryContactPhone || ''}
+                        onChange={(e) => setEditData({ ...editData, tertiaryContactPhone: e.target.value })}
+                        placeholder="Phone"
+                        className="mt-1"
+                      />
+                    ) : (
+                      <p className="text-sm font-medium mt-1">{displayData.tertiaryContactPhone || '—'}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-xs text-muted-foreground">Email</Label>
+                  {isEditing ? (
+                    <Input
+                      type="email"
+                      value={displayData.tertiaryContactEmail || ''}
+                      onChange={(e) => setEditData({ ...editData, tertiaryContactEmail: e.target.value })}
+                      placeholder="email@company.com"
+                      className="mt-1"
+                    />
+                  ) : (
+                    <p className="text-sm font-medium mt-1">{displayData.tertiaryContactEmail ? <a href={`mailto:${displayData.tertiaryContactEmail}`} className="text-accent hover:underline">{displayData.tertiaryContactEmail}</a> : '—'}</p>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Notes Log */}
             <div>
               <Label className="text-xs text-muted-foreground flex items-center gap-1.5 mb-2">

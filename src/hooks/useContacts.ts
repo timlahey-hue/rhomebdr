@@ -33,6 +33,10 @@ const mapDbToContact = (row: any): Contact => ({
   secondaryContactEmail: row.secondary_contact_email,
   secondaryPhone: row.secondary_phone,
   secondaryEmail: row.secondary_email,
+  tertiaryContactName: row.tertiary_contact_name,
+  tertiaryContactTitle: row.tertiary_contact_title,
+  tertiaryContactPhone: row.tertiary_contact_phone,
+  tertiaryContactEmail: row.tertiary_contact_email,
   competitorNotes: row.competitor_notes,
 });
 
@@ -61,6 +65,10 @@ const mapContactToDb = (contact: Omit<Contact, 'id' | 'createdAt'>) => ({
   secondary_contact_email: contact.secondaryContactEmail,
   secondary_phone: contact.secondaryPhone,
   secondary_email: contact.secondaryEmail,
+  tertiary_contact_name: contact.tertiaryContactName,
+  tertiary_contact_title: contact.tertiaryContactTitle,
+  tertiary_contact_phone: contact.tertiaryContactPhone,
+  tertiary_contact_email: contact.tertiaryContactEmail,
   competitor_notes: contact.competitorNotes,
 });
 
@@ -127,6 +135,10 @@ export const useContacts = () => {
       if (updates.secondaryContactEmail !== undefined) dbUpdates.secondary_contact_email = updates.secondaryContactEmail;
       if (updates.secondaryPhone !== undefined) dbUpdates.secondary_phone = updates.secondaryPhone;
       if (updates.secondaryEmail !== undefined) dbUpdates.secondary_email = updates.secondaryEmail;
+      if (updates.tertiaryContactName !== undefined) dbUpdates.tertiary_contact_name = updates.tertiaryContactName;
+      if (updates.tertiaryContactTitle !== undefined) dbUpdates.tertiary_contact_title = updates.tertiaryContactTitle;
+      if (updates.tertiaryContactPhone !== undefined) dbUpdates.tertiary_contact_phone = updates.tertiaryContactPhone;
+      if (updates.tertiaryContactEmail !== undefined) dbUpdates.tertiary_contact_email = updates.tertiaryContactEmail;
       if (updates.competitorNotes !== undefined) dbUpdates.competitor_notes = updates.competitorNotes;
 
       const { error } = await supabase

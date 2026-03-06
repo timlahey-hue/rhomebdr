@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useOrganization } from '@/contexts/OrganizationContext';
 
 export interface ContactActivity {
   id: string;
@@ -97,26 +98,31 @@ export const useContactActivity = (contactId?: string) => {
 };
 
 export const useAllContactActivity = () => {
+  const { currentOrg } = useOrganization();
+
   const { data: activities = [], isLoading } = useQuery({
-    queryKey: ['all-contact-activity'],
+    queryKey: ['all-contact-activity', currentOrg],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('contact_activity')
         .select(`
           *,
-          contacts:contact_id (name, company)
+          contacts:contact_id (name, company, organization)
         `)
         .order('created_at', { ascending: false })
         .limit(200);
-      
+
       if (error) throw error;
-      
-      return data.map((row: any): ActivityWithContact => ({
-        ...mapDbToActivity(row),
-        contactName: row.contacts?.name || 'Unknown',
-        contactCompany: row.contacts?.company || '',
-      }));
+
+      return data
+        .filter((row: any) => row.contacts?.organization === currentOrg)
+        .map((row: any): ActivityWithContact => ({
+          ...mapDbToActivity(row),
+          contactName: row.contacts?.name || 'Unknown',
+          contactCompany: row.contacts?.company || '',
+        }));
     },
+    enabled: !!currentOrg,
   });
 
   return { activities, isLoading };
