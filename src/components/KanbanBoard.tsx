@@ -5,7 +5,7 @@ import { KanbanColumn } from './KanbanColumn';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowUpDown } from 'lucide-react';
 
-type SortOption = 'none' | 'first-name' | 'last-name' | 'company' | 'most-recent';
+type SortOption = 'none' | 'first-name' | 'last-name' | 'company' | 'most-recent' | 'least-recent';
 
 interface KanbanBoardProps {
   boardType: 'prospect' | 'active';
@@ -38,6 +38,11 @@ export const KanbanBoard = ({
         const bDate = b.lastTouchDate ? new Date(b.lastTouchDate).getTime() : 0;
         return bDate - aDate;
       }
+      if (sortBy === 'least-recent') {
+        const aDate = a.lastTouchDate ? new Date(a.lastTouchDate).getTime() : Infinity;
+        const bDate = b.lastTouchDate ? new Date(b.lastTouchDate).getTime() : Infinity;
+        return aDate - bDate;
+      }
       if (sortBy === 'first-name') {
         return a.name.split(' ')[0].localeCompare(b.name.split(' ')[0]);
       }
@@ -65,6 +70,7 @@ export const KanbanBoard = ({
           <SelectContent>
             <SelectItem value="none">Default Order</SelectItem>
             <SelectItem value="most-recent">Most Recent</SelectItem>
+            <SelectItem value="least-recent">Longest Since Touched</SelectItem>
             <SelectItem value="first-name">First Name</SelectItem>
             <SelectItem value="last-name">Last Name</SelectItem>
             <SelectItem value="company">Company Name</SelectItem>
