@@ -11,17 +11,18 @@ const CompanySelector = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Disclaimer Banner */}
-      <div className="bg-destructive text-destructive-foreground text-center py-4 px-6 font-bold text-lg tracking-wide">
-        <p className="text-2xl mb-1">⚠️ DO NOT USE — TRESPASSERS WILL BE VIOLATED ⚠️</p>
-        <p className="text-base font-medium">
-          PLEASE USE THIS LINK:{' '}
-          <a href="https://rhomebdr.vercel.app" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80">
-            rhomebdr.vercel.app
-          </a>
-        </p>
-      </div>
       <div className="flex-1 flex flex-col items-center justify-center px-4">
+        {/* Disclaimer Banner */}
+        <div className="bg-destructive text-destructive-foreground text-center py-6 px-8 rounded-2xl font-bold text-lg tracking-wide mb-10 max-w-xl w-full">
+          <p className="text-3xl mb-2">⚠️ DO NOT USE ⚠️</p>
+          <p className="text-xl mb-3">TRESPASSERS WILL BE VIOLATED</p>
+          <p className="text-base font-medium">
+            PLEASE USE THIS LINK:{' '}
+            <a href="https://rhomebdr.vercel.app" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80">
+              rhomebdr.vercel.app
+            </a>
+          </p>
+        </div>
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold text-foreground">BDR Hub</h1>
           <p className="text-muted-foreground mt-2">Select your company to get started</p>
