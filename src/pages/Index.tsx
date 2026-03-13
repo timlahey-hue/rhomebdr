@@ -157,6 +157,16 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Disclaimer Banner */}
+      <div className="bg-destructive text-destructive-foreground text-center py-4 px-6 font-bold text-lg tracking-wide">
+        <p className="text-2xl mb-1">⚠️ DO NOT USE — TRESPASSERS WILL BE VIOLATED ⚠️</p>
+        <p className="text-base font-medium">
+          PLEASE USE THIS LINK:{' '}
+          <a href="https://rhomebdr.vercel.app" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80">
+            rhomebdr.vercel.app
+          </a>
+        </p>
+      </div>
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border/50">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
