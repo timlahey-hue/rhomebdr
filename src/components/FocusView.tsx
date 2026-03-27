@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { Contact } from '@/types/bdr';
 import { useReminders } from '@/hooks/useReminders';
-import { useRecentNotes } from '@/hooks/useRecentNotes';
+import { useRecentNotes, DateRange } from '@/hooks/useRecentNotes';
 import { isOverdue, isDueSoon, needsAttention, getSuggestedActions } from '@/lib/actions';
 import { ContactCard } from './ContactCard';
 import { ActionCard } from './ActionCard';
@@ -9,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Bell, AlertCircle, MessageSquare, Trash2, Clock } from 'lucide-react';
 import { format, parseISO, isPast, isToday } from 'date-fns';
 
@@ -19,7 +21,8 @@ interface FocusViewProps {
 
 export const FocusView = ({ contacts, onCardClick }: FocusViewProps) => {
   const { reminders, overdueReminders, upcomingReminders, deleteReminder } = useReminders();
-  const { recentNotes } = useRecentNotes(30);
+  const [notesRange, setNotesRange] = useState<DateRange>('2weeks');
+  const { recentNotes } = useRecentNotes(notesRange);
 
   const overdueContacts = contacts.filter(isOverdue);
   const needsAttentionContacts = contacts.filter(needsAttention);
@@ -188,13 +191,25 @@ export const FocusView = ({ contacts, onCardClick }: FocusViewProps) => {
       {/* Recent Notes Activity Feed */}
       <Card className="border-border/50">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-medium flex items-center gap-2">
-            <MessageSquare className="h-4 w-4 text-accent" />
-            Recent Notes Activity
-            <Badge variant="secondary" className="text-xs font-normal">
-              {recentNotes.length} notes
-            </Badge>
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base font-medium flex items-center gap-2">
+              <MessageSquare className="h-4 w-4 text-accent" />
+              Recent Notes Activity
+              <Badge variant="secondary" className="text-xs font-normal">
+                {recentNotes.length} notes
+              </Badge>
+            </CardTitle>
+            <Select value={notesRange} onValueChange={(v) => setNotesRange(v as DateRange)}>
+              <SelectTrigger className="w-[140px] h-8 text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1week">Past Week</SelectItem>
+                <SelectItem value="2weeks">Past 2 Weeks</SelectItem>
+                <SelectItem value="30days">Past 30 Days</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[400px] pr-4">

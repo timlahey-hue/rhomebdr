@@ -77,7 +77,7 @@ export const PROSPECT_COLUMNS: Column<ProspectStage>[] = [
   { id: 'first-contact', title: 'First Contact', color: 'bg-column-contact' },
   { id: 'active-conversation', title: 'Active Conversation', color: 'bg-column-active' },
   { id: 'hot-stove', title: 'Hot Stove', color: 'bg-column-warm' },
-  { id: 'ready-for-referral', title: 'Ready for Referral', color: 'bg-column-ready' },
+  { id: 'ready-for-referral', title: 'Top 10', color: 'bg-column-ready' },
   { id: 'dormant', title: 'Dormant', color: 'bg-column-dormant' },
   { id: 'identified-competitor', title: 'Identified Competitor', color: 'bg-column-competitor' },
 ];
