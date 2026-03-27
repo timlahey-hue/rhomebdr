@@ -1,4 +1,4 @@
-export type RoleType = 'Architect' | 'Builder' | 'Interior Designer' | 'Landscape Designer' | 'Real Estate Advisor' | 'Other';
+export type RoleType = 'Architect' | 'Builder' | 'Interior Designer' | 'Landscape Designer' | 'Real Estate Advisor' | 'Property Manager' | 'Construction Manager' | 'Other';
 
 export type RelationshipType = 'Target' | 'Active Partner' | 'Influencer';
 
@@ -40,6 +40,7 @@ export interface Contact {
   board: 'prospect' | 'active';
   stage: ProspectStage | ActiveStage;
   createdAt: string;
+  updatedAt?: string;
   address?: string;
   website?: string;
   phone?: string;
@@ -51,6 +52,7 @@ export interface Contact {
   watched?: boolean;
   tier?: TierLevel;
   secondaryContactName?: string;
+  secondaryContactRole?: string;
   secondaryContactTitle?: string;
   secondaryContactPhone?: string;
   secondaryContactEmail?: string;
@@ -92,8 +94,10 @@ export const ACTIVE_COLUMNS: Column<ActiveStage>[] = [
 export const ROLE_OPTIONS: RoleType[] = [
   'Architect',
   'Builder',
+  'Construction Manager',
   'Interior Designer',
   'Landscape Designer',
+  'Property Manager',
   'Real Estate Advisor',
   'Other',
 ];

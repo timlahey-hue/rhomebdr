@@ -739,7 +739,7 @@ export const ContactDetailSheet = ({
             {(displayData.secondaryContactName || isEditing) && (
               <div className="border rounded-lg p-3 bg-muted/30 space-y-3">
                 <h4 className="text-sm font-medium">Secondary Contact</h4>
-                
+
                 <div>
                   <Label className="text-xs text-muted-foreground">Name</Label>
                   {isEditing ? (
@@ -751,6 +751,27 @@ export const ContactDetailSheet = ({
                     />
                   ) : (
                     <p className="text-sm font-medium mt-1">{displayData.secondaryContactName || '—'}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label className="text-xs text-muted-foreground">Role</Label>
+                  {isEditing ? (
+                    <Select
+                      value={displayData.secondaryContactRole || ''}
+                      onValueChange={(value) => setEditData({ ...editData, secondaryContactRole: value })}
+                    >
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ROLE_OPTIONS.map((role) => (
+                          <SelectItem key={role} value={role}>{role}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <p className="text-sm font-medium mt-1">{displayData.secondaryContactRole || '—'}</p>
                   )}
                 </div>
 
@@ -881,8 +902,8 @@ export const ContactDetailSheet = ({
                   placeholder="Pinned status note..."
                 />
               ) : displayData.statusNotes ? (
-                <div className="bg-muted/50 border border-border rounded-lg p-2.5 mb-3">
-                  <p className="text-sm text-foreground/80">{displayData.statusNotes}</p>
+                <div className="bg-muted/50 border border-border rounded-lg p-2.5 mb-3 max-h-[120px] overflow-y-auto">
+                  <p className="text-sm text-foreground/80 whitespace-pre-wrap">{displayData.statusNotes}</p>
                 </div>
               ) : null}
 
@@ -918,11 +939,11 @@ export const ContactDetailSheet = ({
 
               {/* Notes history */}
               {notes.length > 0 && (
-                <ScrollArea className="max-h-[200px]">
+                <ScrollArea className="max-h-[300px]">
                   <div className="space-y-2 pr-3">
                     {notes.map((n) => (
                       <div key={n.id} className="border border-border rounded-lg p-2.5">
-                        <p className="text-sm text-foreground/90 whitespace-pre-wrap">{n.note}</p>
+                        <p className="text-sm text-foreground/90 whitespace-pre-wrap max-h-[150px] overflow-y-auto">{n.note}</p>
                         <p className="text-[11px] text-muted-foreground mt-1.5">
                           {format(new Date(n.createdAt), 'MMM d, yyyy · h:mm a')}
                         </p>

@@ -34,13 +34,13 @@ export const KanbanBoard = ({
     if (sortBy === 'none') return list;
     return [...list].sort((a, b) => {
       if (sortBy === 'most-recent') {
-        const aDate = a.lastTouchDate ? new Date(a.lastTouchDate).getTime() : 0;
-        const bDate = b.lastTouchDate ? new Date(b.lastTouchDate).getTime() : 0;
+        const aDate = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+        const bDate = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
         return bDate - aDate;
       }
       if (sortBy === 'least-recent') {
-        const aDate = a.lastTouchDate ? new Date(a.lastTouchDate).getTime() : Infinity;
-        const bDate = b.lastTouchDate ? new Date(b.lastTouchDate).getTime() : Infinity;
+        const aDate = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+        const bDate = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
         return aDate - bDate;
       }
       if (sortBy === 'first-name') {

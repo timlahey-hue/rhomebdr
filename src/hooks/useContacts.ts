@@ -17,6 +17,7 @@ const mapDbToContact = (row: any): Contact => ({
   board: row.board,
   stage: row.stage,
   createdAt: row.created_at,
+  updatedAt: row.updated_at,
   address: row.address,
   website: row.website,
   phone: row.phone,
@@ -28,6 +29,7 @@ const mapDbToContact = (row: any): Contact => ({
   watched: row.watched || false,
   tier: row.tier || undefined,
   secondaryContactName: row.secondary_contact_name,
+  secondaryContactRole: row.secondary_contact_role,
   secondaryContactTitle: row.secondary_contact_title,
   secondaryContactPhone: row.secondary_contact_phone,
   secondaryContactEmail: row.secondary_contact_email,
@@ -60,6 +62,7 @@ const mapContactToDb = (contact: Omit<Contact, 'id' | 'createdAt'>) => ({
   company_type: contact.companyType,
   tier: contact.tier || null,
   secondary_contact_name: contact.secondaryContactName,
+  secondary_contact_role: contact.secondaryContactRole,
   secondary_contact_title: contact.secondaryContactTitle,
   secondary_contact_phone: contact.secondaryContactPhone,
   secondary_contact_email: contact.secondaryContactEmail,
@@ -130,6 +133,7 @@ export const useContacts = () => {
       if (updates.companyType !== undefined) dbUpdates.company_type = updates.companyType;
       if (updates.tier !== undefined) dbUpdates.tier = updates.tier;
       if (updates.secondaryContactName !== undefined) dbUpdates.secondary_contact_name = updates.secondaryContactName;
+      if (updates.secondaryContactRole !== undefined) dbUpdates.secondary_contact_role = updates.secondaryContactRole;
       if (updates.secondaryContactTitle !== undefined) dbUpdates.secondary_contact_title = updates.secondaryContactTitle;
       if (updates.secondaryContactPhone !== undefined) dbUpdates.secondary_contact_phone = updates.secondaryContactPhone;
       if (updates.secondaryContactEmail !== undefined) dbUpdates.secondary_contact_email = updates.secondaryContactEmail;
@@ -140,6 +144,8 @@ export const useContacts = () => {
       if (updates.tertiaryContactPhone !== undefined) dbUpdates.tertiary_contact_phone = updates.tertiaryContactPhone;
       if (updates.tertiaryContactEmail !== undefined) dbUpdates.tertiary_contact_email = updates.tertiaryContactEmail;
       if (updates.competitorNotes !== undefined) dbUpdates.competitor_notes = updates.competitorNotes;
+
+      dbUpdates.updated_at = new Date().toISOString();
 
       const { error } = await supabase
         .from('contacts')
